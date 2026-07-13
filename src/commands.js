@@ -265,6 +265,20 @@ const COMANDOS = {
       return engagement.getLogrosUsuario(groupId, userId);
     },
   },
+
+  test: {
+    desc: 'Enviar contenido de prueba',
+    ejecutar: async (groupId) => {
+      const { generateDailyContentWithRanking } = require('./messages/generator');
+      const grupo = config.GROUPS[groupId];
+      if (!grupo || !grupo.registrado) return 'Primero registra el grupo con !registrar prueba';
+      const content = await generateDailyContentWithRanking(groupId, grupo.tipo);
+      if (content.type === 'image' && content.imageBuffer) {
+        return { type: 'image', imageBuffer: content.imageBuffer, caption: content.formattedMessage || content.caption || '' };
+      }
+      return content.message;
+    },
+  },
 };
 
 async function ejecutarComando(comando, groupId, args = [], senderName = '', userId = '') {
