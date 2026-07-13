@@ -181,19 +181,20 @@ function getAdminHTML(content, queueItems) {
     const statusClass = item.enviada ? 'sent' : 'pending';
     const statusText = item.enviada ? 'Enviada' : 'Pendiente';
     const dateStr = item.fecha + ' ' + item.hora;
+    const deleteBtn = !item.enviada
+      ? `<button class="btn btn-sm btn-delete" onclick="deleteQueueItem('${item.id}')">🗑️</button>`
+      : '';
+    const mediaIcons = []
+    if (item.imageUrl) mediaIcons.push('<span title="Tiene imagen">🖼️</span>');
+    if (item.videoUrl) mediaIcons.push('<span title="Tiene video">🎬</span>');
     return `
       <tr class="${statusClass}">
         <td>${item.titulo || '(Sin titulo)'}</td>
         <td>${item.tipo}</td>
         <td>${dateStr}</td>
         <td><span class="badge badge-${statusClass}">${statusText}</span></td>
-        <td>
-          ${item.imageUrl ? '<span title="Tiene imagen">🖼️</span>' : ''}
-          ${item.videoUrl ? '<span title="Tiene video">🎬</span>' : ''}
-        </td>
-        <td>
-          ${!item.enviada ? '<button class="btn btn-sm btn-delete" onclick="deleteQueueItem(\\'' + item.id + '\\')">🗑️</button>' : ''}
-        </td>
+        <td>${mediaIcons.join(' ')}</td>
+        <td>${deleteBtn}</td>
       </tr>
     `;
   }).join('');
