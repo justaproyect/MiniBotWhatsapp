@@ -36,9 +36,57 @@ async function generateDailyContent(tipoGrupo) {
     case 'anuncios':
       return getDailyAnuncio();
 
+    case 'prueba':
+      return await generatePruebaContent();
+
     default:
       return await getDailyPokemon();
   }
+}
+
+async function generatePruebaContent() {
+  const pokemon = await getDailyPokemon();
+  const intercambio = getDailyIntercambio();
+  const subasta = getDailySubasta();
+  const raid = getDailyRaid();
+  const tienda = getDailyTienda();
+  const anuncio = getDailyAnuncio();
+
+  const lines = [
+    '*🎮 MODO PRUEBA - Todos los tipos de contenido*',
+    '',
+    '═════════════════════',
+    '🟡 *GENERAL (Pokemon del dia):*',
+    '═════════════════════',
+    pokemon.formattedMessage || pokemon.message,
+    '',
+    '═════════════════════',
+    '🟢 *COMPRA (Intercambio):*',
+    '═════════════════════',
+    intercambio.message,
+    '',
+    '═════════════════════',
+    '🔴 *RIFAS/SUBASTAS:*',
+    '═════════════════════',
+    subasta.message,
+    '',
+    '═════════════════════',
+    '🔵 *TORNEOS (Raids):*',
+    '═════════════════════',
+    raid.message,
+    '',
+    '═════════════════════',
+    '🟣 *TIENDA:*',
+    '═════════════════════',
+    tienda.message,
+    '',
+    '═════════════════════',
+    '🟠 *ANUNCIOS:*',
+    '═════════════════════',
+    anuncio.message,
+  ];
+
+  return { type: 'text', message: lines.join('\n') };
 }
 
 function getRankingForGroup(groupId) {

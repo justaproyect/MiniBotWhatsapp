@@ -79,7 +79,7 @@ const COMANDOS = {
     necesitaArgs: true,
    ejecutar: (groupId, args) => {
       const tipo = args[0]?.toLowerCase();
-      const tiposValidos = ['general', 'compra', 'rifas', 'torneos', 'subastas', 'tienda', 'anuncios'];
+      const tiposValidos = ['general', 'compra', 'rifas', 'torneos', 'subastas', 'tienda', 'anuncios', 'prueba'];
       if (!tipo || !tiposValidos.includes(tipo)) {
         return `Tipo inválido. Tipos válidos: ${tiposValidos.join(', ')}`;
       }
