@@ -1,0 +1,252 @@
+[
+  {
+    "id": 1,
+    "texto": "Pikachu, el Pokemon mas icónico, fue originalmente concebido como un Pokemon de tipo rata antes de ser clasificado como eléctrico.",
+    "categoria": "general"
+  },
+  {
+    "id": 2,
+    "texto": "El nombre original de Chansey en japonés es 'Lucky', que significa 'suerte'. Su forma de huevo representa la buena fortuna.",
+    "categoria": "general"
+  },
+  {
+    "id": 3,
+    "texto": "Gengar puede esconderse en las sombras de cualquier persona. Se dice que aparece cuando baja la temperatura.",
+    "categoria": "general"
+  },
+  {
+    "id": 4,
+    "texto": "El nombre de Jigglypuff viene de 'jiggle' (temblar) y 'puff' (inflar), describiendo perfectamente su apariencia redonda y saltarina.",
+    "categoria": "general"
+  },
+  {
+    "id": 5,
+    "texto": "Arceus, el Pokemon legendario, fue creado hace 10,000 millones de años y se dice que moldeó el universo con sus 1,000 brazos.",
+    "categoria": "legendario"
+  },
+  {
+    "id": 6,
+    "texto": "Mewtwo fue creado por ciencia, manipulando el ADN de Mew. Es considerado uno de los Pokemon mas poderosos jamás creados.",
+    "categoria": "legendario"
+  },
+  {
+    "id": 7,
+    "texto": "Lugia es tan poderoso que su simple batir de alas puede causar tormentas de 40 días. Por eso vive en el fondo del mar.",
+    "categoria": "legendario"
+  },
+  {
+    "id": 8,
+    "texto": "El Pokédex es un dispositivo electrónico que contiene información sobre todos los Pokemon conocidos. Prof. Oak lo inventó.",
+    "categoria": "general"
+  },
+  {
+    "id": 9,
+    "texto": "Snorlax duerme casi todo el día y se despierta solo para comer. En promedio duerme 23 horas al día.",
+    "categoria": "curiosidad"
+  },
+  {
+    "id": 10,
+    "texto": "El ataque mas poderoso de un Pokemon en los juegos es 'Explosión', con 200 de poder base.",
+    "categoria": "batalla"
+  },
+  {
+    "id": 11,
+    "texto": "Eevee puede evolucionar en 8 formas diferentes, convirtiéndolo en el Pokemon con mas evoluciones.",
+    "categoria": "evolucion"
+  },
+  {
+    "id": 12,
+    "texto": "El nombre de Pokemon es una contracción de 'Pocket Monster' (Monstruo de Bolsillo).",
+    "categoria": "general"
+  },
+  {
+    "id": 13,
+    "texto": "Magikarp es conocido como el Pokemon mas débil, pero su evolución Gyarados es una de las mas poderosas de tipo agua/volador.",
+    "categoria": "general"
+  },
+  {
+    "id": 14,
+    "texto": "El primer episodio de Pokemon fue emitido el 1 de abril de 1997 en Japón. Han pasado mas de 25 años.",
+    "categoria": "general"
+  },
+  {
+    "id": 15,
+    "texto": "Clefairy fue originalmente pensado como el mascote de la franquicia, pero Pikachu le ganó en popularidad.",
+    "categoria": "general"
+  },
+  {
+    "id": 16,
+    "texto": "Wailord es el Pokemon mas grande, con 14.5 metros de largo. Es tan grande que puede cubrir un Pokéball completo.",
+    "categoria": "curiosidad"
+  },
+  {
+    "id": 17,
+    "texto": "Ditto puede transformarse en cualquier Pokemon, pero siempre conserva su forma de ojos y boca.",
+    "categoria": "general"
+  },
+  {
+    "id": 18,
+    "texto": "El tipo Dragón es el tipo mas raro en la primera generación, con solo 3 Pokemon de ese tipo.",
+    "categoria": "batalla"
+  },
+  {
+    "id": 19,
+    "texto": "Pikachu tiene 2 electricidades en sus mejillas que le permiten almacenar electricidad. Puede liberar hasta 100,000 voltios.",
+    "categoria": "general"
+  },
+  {
+    "id": 20,
+    "texto": "Rayquaza puede volar a Mach 20 y puede vivir en el ozono sin problemas. Es el guardián del cielo.",
+    "categoria": "legendario"
+  },
+  {
+    "id": 21,
+    "texto": "Psyduck siempre tiene dolor de cabeza. Cuando el dolor se vuelve insoportable, desata poderes psíquicos incontrolables.",
+    "categoria": "curiosidad"
+  },
+  {
+    "id": 22,
+    "texto": "Giratina fue desterrado al Mundo Distorsión por Arceus por su comportamiento violento.",
+    "categoria": "legendario"
+  },
+  {
+    "id": 23,
+    "texto": "El ataque Salpicadura no tiene ningún efecto en batalla, pero en la versión beta si causaba daño.",
+    "categoria": "batalla"
+  },
+  {
+    "id": 24,
+    "texto": "Togepi fue el primer Pokemon que apareció en huevo en el anime, y Misty lo eclosionó.",
+    "categoria": "anime"
+  },
+  {
+    "id": 25,
+    "texto": "Los Pokemon Fantasma solo pueden ser tocados por otros Pokemon Fantasma. Los humanos no pueden tocarlos.",
+    "categoria": "general"
+  },
+  {
+    "id": 26,
+    "texto": "El nombre de Bulbasaur en japonés es 'Fushigidane', que significa '¿No es eso asombroso?'",
+    "categoria": "general"
+  },
+  {
+    "id": 27,
+    "texto": "Charizard puede volar a alturas de mas de 6,000 metros y su aliento puede derretir rocas.",
+    "categoria": "general"
+  },
+  {
+    "id": 28,
+    "texto": "El Pokemon mas rápido es Regieleki con una velocidad base de 200 puntos.",
+    "categoria": "batalla"
+  },
+  {
+    "id": 29,
+    "texto": "Alakazam tiene un coeficiente intelectual de 5,000 y nunca olvida nada.",
+    "categoria": "general"
+  },
+  {
+    "id": 30,
+    "texto": "En la región de Kalos, el nombre de la ciudad principal es Lumiose, inspirada en París.",
+    "categoria": "region"
+  },
+  {
+    "id": 31,
+    "texto": "Zygarde es el guardián del equilibrio de la naturaleza. Cuando el medio ambiente esta en peligro, aparece.",
+    "categoria": "legendario"
+  },
+  {
+    "id": 32,
+    "texto": "El Movimiento 'Bomba Sónica' siempre causa 20 puntos de daño fijo, sin importar el tipo o debilidad.",
+    "categoria": "batalla"
+  },
+  {
+    "id": 33,
+    "texto": "Turtwig, el Pokemon tortuga de la 4ta generación, puede fotosintetizar con su caparazón verde.",
+    "categoria": "general"
+  },
+  {
+    "id": 34,
+    "texto": "En Japón, hay un tren temático de Pokemon que recorre la isla de Kyushu.",
+    "categoria": "curiosidad"
+  },
+  {
+    "id": 35,
+    "texto": "Los Pokemon tipo Hada fueron introducidos en la 6ta generación como contrapeso natural a los tipo Dragón.",
+    "categoria": "batalla"
+  },
+  {
+    "id": 36,
+    "texto": "Deoxys fue creado a partir de un virus espacial que cayó a la Tierra desde el espacio.",
+    "categoria": "legendario"
+  },
+  {
+    "id": 37,
+    "texto": "El primer Pokemon shiny que apareció en el anime fue un Pikachu dorado en el episodio 201.",
+    "categoria": "anime"
+  },
+  {
+    "id": 38,
+    "texto": "Slaking, a pesar de ser el Pokemon mas perezoso, tiene una estadística base total de 670, comparable a muchos legendarios.",
+    "categoria": "batalla"
+  },
+  {
+    "id": 39,
+    "texto": "El nombre de Ho-Oh significa 'Fénix' en japonés, representando su poder de renacer de las cenizas.",
+    "categoria": "legendario"
+  },
+  {
+    "id": 40,
+    "texto": "En los juegos originales, solo habia 151 Pokemon. Ahora hay mas de 1,000.",
+    "categoria": "general"
+  },
+  {
+    "id": 41,
+    "texto": "Cubone lleva la calavera de su madre muerta en la cabeza. Es uno de los Pokemon mas tristes.",
+    "categoria": "curiosidad"
+  },
+  {
+    "id": 42,
+    "texto": "Regigigas tiene una estadística base total de 670, pero su habilidad 'Inicio Lento' reduce sus stats por 5 turnos.",
+    "categoria": "batalla"
+  },
+  {
+    "id": 43,
+    "texto": "La región de Galar esta basada en Reino Unido, y la región de Paldea esta basada en la Península Ibérica.",
+    "categoria": "region"
+  },
+  {
+    "id": 44,
+    "texto": "Sableye es el unico Pokemon que es inmune a los ataques tipo Hada porque es tipo Siniestro/Fantasma.",
+    "categoria": "batalla"
+  },
+  {
+    "id": 45,
+    "texto": "El nombre de Gengar viene de 'doppelganger' (el doble malvado de una persona).",
+    "categoria": "general"
+  },
+  {
+    "id": 46,
+    "texto": "Volcanion es el unico Pokemon tipo Fuego/Agua, y puede crear vapor que destruye montañas.",
+    "categoria": "general"
+  },
+  {
+    "id": 47,
+    "texto": "El Pokemon mas pesado es Celesteela con 999.9 kg, equivalente a un auto grande.",
+    "categoria": "curiosidad"
+  },
+  {
+    "id": 48,
+    "texto": "Ninjask es el Pokemon mas rápido que puede evolucionar, y requiere subir de nivel durante la noche.",
+    "categoria": "evolucion"
+  },
+  {
+    "id": 49,
+    "texto": "En Pokemon Rojo/Azul, MissingNo. era un Pokemon glitch que aparecia cuando hacias un truco especial.",
+    "categoria": "general"
+  },
+  {
+    "id": 50,
+    "texto": "La habilidad 'Levitación' hace inmune a los ataques tipo Tierra. Es una de las habilidades mas utiles del juego.",
+    "categoria": "batalla"
+  }
+]

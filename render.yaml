@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: pokemon-whatsapp-bot
+    runtime: node
+    region: oregon
+    plan: free
+    buildCommand: npm install
+    startCommand: node src/index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: ADMIN_NUMBER
+        sync: false
+      - key: SEND_HOUR
+        value: 8
+      - key: SEND_MINUTE
+        value: 0
+      - key: TIMEZONE
+        value: America/Bogota

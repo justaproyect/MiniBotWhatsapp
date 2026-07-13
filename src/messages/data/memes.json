@@ -1,0 +1,177 @@
+[
+  {
+    "id": 1,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/1h7in3.jpg",
+    "caption": "Cuando te dicen que Magikarp es el peor Pokemon pero Gyarados te contradice",
+    "categoria": "evolucion"
+  },
+  {
+    "id": 2,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/262oeg.jpg",
+    "caption": "POV: Estas intentando atrapar un Pokemon legendario con una Pokeball normal",
+    "categoria": "pokeball"
+  },
+  {
+    "id": 3,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/1g8my4.jpg",
+    "caption": "Ash teniendo 10 años por 25 años consecutivos",
+    "categoria": "anime"
+  },
+  {
+    "id": 4,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/29v5vl.jpg",
+    "caption": "Team Rocket: 'Preparados para molestar a Ash!' *Se aparece un Dragonite gigante*",
+    "categoria": "anime"
+  },
+  {
+    "id": 5,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/1bes5f.jpg",
+    "caption": "Cuando Pikachu dice 'Pika Pika' y todos los humanos lo entienden perfectamente",
+    "categoria": "pikachu"
+  },
+  {
+    "id": 6,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/29bwz8.jpg",
+    "caption": "Snorlax bloqueando tu camino como si nada",
+    "categoria": "snorlax"
+  },
+  {
+    "id": 7,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/1h7t4.jpg",
+    "caption": "El profesor Oak: 'No se puede usar eso aqui' *Todavia no tienes las 8 medallas*",
+    "categoria": "juego"
+  },
+  {
+    "id": 8,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/262ob2.jpg",
+    "caption": "Cuando llevas 3 horas buscando un shiny y aparece el que no querias",
+    "categoria": "shiny"
+  },
+  {
+    "id": 9,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/29v605.jpg",
+    "caption": "Meowth en el Team Rocket siendo el unico que habla y nadie lo toma en serio",
+    "categoria": "anime"
+  },
+  {
+    "id": 10,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/1h7in3.jpg",
+    "caption": "Entrenador promedio: 'Necesito el Pokedex de todos los Pokemon' *Pro. Oak sonrie*",
+    "categoria": "general"
+  },
+  {
+    "id": 11,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/262oeg.jpg",
+    "caption": "Cuando intentas usar Surf pero tu Pokemon no sabe el movimiento",
+    "categoria": "juego"
+  },
+  {
+    "id": 12,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/1bes5f.jpg",
+    "caption": "Pikachu rechazando su evolución como si fuera algo normal",
+    "categoria": "pikachu"
+  },
+  {
+    "id": 13,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/29bwz8.jpg",
+    "caption": "Cubone usando la calavera de su mama como casco",
+    "categoria": "curiosidad"
+  },
+  {
+    "id": 14,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/1h7t4.jpg",
+    "caption": "Cuando tu Charizard obedece pero solo si tiene PS bajo",
+    "categoria": "juego"
+  },
+  {
+    "id": 15,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/262ob2.jpg",
+    "caption": "Ditto transformándose en cualquier Pokemon pero manteniendo su carita graciosa",
+    "categoria": "general"
+  },
+  {
+    "id": 16,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/29v605.jpg",
+    "caption": "Gengar escondido en la sombra de alguien y nadie lo sabe",
+    "categoria": "gengar"
+  },
+  {
+    "id": 17,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/1h7in3.jpg",
+    "caption": "Magikarp usando Salpicadura *0 de daño* *sonrisa de Magikarp*",
+    "categoria": "magikarp"
+  },
+  {
+    "id": 18,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/262oeg.jpg",
+    "caption": "Cuando te encuentras un Pokemon raro pero tu Pokedex ya lo tiene",
+    "categoria": "general"
+  },
+  {
+    "id": 19,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/1bes5f.jpg",
+    "caption": "Team Rocket: *Se infla* *Se desinfla* *Se va volando*",
+    "categoria": "team-rocket"
+  },
+  {
+    "id": 20,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/29bwz8.jpg",
+    "caption": "Bulbasaur, Charmander y Squirtle siendo los starters mas perfectos jamás creados",
+    "categoria": "starter"
+  },
+  {
+    "id": 21,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/1h7t4.jpg",
+    "caption": "Jigglypuff cantando y todos quedandose dormidos otra vez",
+    "categoria": "anime"
+  },
+  {
+    "id": 22,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/262ob2.jpg",
+    "caption": "Cuando capturas a Mewtwo pero se te escapa en el primer intento",
+    "categoria": "legendario"
+  },
+  {
+    "id": 23,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/29v605.jpg",
+    "caption": "Lugia viviendo en el fondo del mar porque es demasiado poderoso para la superficie",
+    "categoria": "legendario"
+  },
+  {
+    "id": 24,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/1bes5f.jpg",
+    "caption": "El Profesor Oak: 'Tengo 10 años' *Ash tiene 10 años desde 1997*",
+    "categoria": "anime"
+  },
+  {
+    "id": 25,
+    "tipo": "imagen-url",
+    "url": "https://i.imgflip.com/29bwz8.jpg",
+    "caption": "Psyduck siempre con dolor de cabeza pero teniendo poderes psíquicos",
+    "categoria": "psyduck"
+  }
+]

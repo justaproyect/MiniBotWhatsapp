@@ -1,0 +1,137 @@
+[
+  {
+    "id": 1,
+    "tipo": "raid",
+    "pokemon": "Mewtwo",
+    "nivel": "5 estrellas",
+    "descripcion": "¡Hora de raid! Mewtwo aparece en las gimnasios. Organiza tu grupo y derrotalo!",
+    "hora": "12:00 PM - 2:00 PM",
+    "recompensa": "Caramelo raro + posibilidad de captura"
+  },
+  {
+    "id": 2,
+    "tipo": "raid",
+    "pokemon": "Rayquaza",
+    "nivel": "5 estrellas",
+    "descripcion": "Rayquaza ha descendido del cielo. Necesitas un equipo fuerte para derrotarlo.",
+    "hora": "6:00 PM - 8:00 PM",
+    "recompensa": "Caramelo dragón + posibilidad de captura"
+  },
+  {
+    "id": 3,
+    "tipo": "raid",
+    "pokemon": "Kyogre",
+    "nivel": "5 estrellas",
+    "descripcion": "Kyogre domina los océanos. Trae Pokemon de tipo planta o eléctrico.",
+    "hora": "10:00 AM - 12:00 PM",
+    "recompensa": "Caramelo agua + posibilidad de captura"
+  },
+  {
+    "id": 4,
+    "tipo": "raid",
+    "pokemon": "Groudon",
+    "nivel": "5 estrellas",
+    "descripcion": "Groudon controla la tierra. Usa Pokemon de tipo agua para derrotarlo.",
+    "hora": "4:00 PM - 6:00 PM",
+    "recompensa": "Caramelo tierra + posibilidad de captura"
+  },
+  {
+    "id": 5,
+    "tipo": "raid",
+    "pokemon": "Giratina",
+    "nivel": "5 estrellas",
+    "descripcion": "Giratina del Mundo Distorsion ha aparecido. Pokemon de tipo hada son efectivos.",
+    "hora": "8:00 PM - 10:00 PM",
+    "recompensa": "Caramelo fantasma/siniestro + posibilidad de captura"
+  },
+  {
+    "id": 6,
+    "tipo": "raid",
+    "pokemon": "Articuno",
+    "nivel": "5 estrellas",
+    "descripcion": "Articuno, el pajaro hielo, ha aparecido. Usa fuego, roca o acero.",
+    "hora": "11:00 AM - 1:00 PM",
+    "recompensa": "Caramelo hielo/volador + posibilidad de captura"
+  },
+  {
+    "id": 7,
+    "tipo": "raid",
+    "pokemon": "Zapdos",
+    "nivel": "5 estrellas",
+    "descripcion": "Zapdos controla los rayos. Usa tierra para derrotarlo facilmente.",
+    "hora": "3:00 PM - 5:00 PM",
+    "recompensa": "Caramelo eléctrico/volador + posibilidad de captura"
+  },
+  {
+    "id": 8,
+    "tipo": "raid",
+    "pokemon": "Moltres",
+    "nivel": "5 estrellas",
+    "descripcion": "Moltres, el pajaro fuego, ha aparecido. Usa agua, tierra o roca.",
+    "hora": "5:00 PM - 7:00 PM",
+    "recompensa": "Caramelo fuego/volador + posibilidad de captura"
+  },
+  {
+    "id": 9,
+    "tipo": "raid",
+    "pokemon": "Deoxys",
+    "nivel": "5 estrellas",
+    "descripcion": "Deoxys Normal ha aparecido en los cristales. Organiza tu mejor equipo.",
+    "hora": "9:00 AM - 11:00 AM",
+    "recompensa": "Caramelo psíquico + posibilidad de captura"
+  },
+  {
+    "id": 10,
+    "tipo": "raid",
+    "pokemon": "Heatran",
+    "nivel": "5 estrellas",
+    "descripcion": "Heatran, el Pokemon magma, ha aparecido. Usa agua o tierra para debilitarlo.",
+    "hora": "1:00 PM - 3:00 PM",
+    "recompensa": "Caramelo fuego/acero + posibilidad de captura"
+  },
+  {
+    "id": 11,
+    "tipo": "raid",
+    "pokemon": "Cresselia",
+    "nivel": "5 estrellas",
+    "descripcion": "Cresselia, la Pokemon de la luna, ha aparecido. Usa fantasmas o siniestro.",
+    "hora": "7:00 PM - 9:00 PM",
+    "recompensa": "Caramelo psíquico + posibilidad de captura"
+  },
+  {
+    "id": 12,
+    "tipo": "raid",
+    "pokemon": "Regice",
+    "nivel": "5 estrellas",
+    "descripcion": "Regice, el golem de hielo, ha aparecido. Usa fuego, lucha o roca.",
+    "hora": "10:00 AM - 12:00 PM",
+    "recompensa": "Caramelo hielo + posibilidad de captura"
+  },
+  {
+    "id": 13,
+    "tipo": "raid",
+    "pokemon": "Regirock",
+    "nivel": "5 estrellas",
+    "descripcion": "Regirock, el golem de roca, ha aparecido. Usa agua, planta, lucha, tierra o acero.",
+    "hora": "2:00 PM - 4:00 PM",
+    "recompensa": "Caramelo roca + posibilidad de captura"
+  },
+  {
+    "id": 14,
+    "tipo": "raid",
+    "pokemon": "Registeel",
+    "nivel": "5 estrellas",
+    "descripcion": "Registeel, el golem de acero, ha aparecido. Usa fuego, lucha o tierra.",
+    "hora": "6:00 PM - 8:00 PM",
+    "recompensa": "Caramelo acero + posibilidad de captura"
+  },
+  {
+    "id": 15,
+    "tipo": "raid",
+    "pokemon": "Latios",
+    "nivel": "5 estrellas",
+    "descripcion": "Latios ha aparecido en el cielo. Usa hielo, fantasma, dragón o hada.",
+    "hora": "12:00 PM - 2:00 PM",
+    "recompensa": "Caramelo dragón/psíquico + posibilidad de captura"
+  }
+]

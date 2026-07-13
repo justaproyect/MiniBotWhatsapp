@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "texto": "El poder de la amistad puede superar cualquier obstáculo, incluso a los Pokemon legendarios!",
+    "categoria": "amistad"
+  },
+  {
+    "id": 2,
+    "texto": "Recuerda: cada Pokemon, sin importar su tipo o rareza, tiene algo especial que lo hace único.",
+    "categoria": "motivacion"
+  },
+  {
+    "id": 3,
+    "texto": "La relación entre un entrenador y su Pokemon es la base de todo. Confianza mutua = victoria!",
+    "categoria": "amistad"
+  },
+  {
+    "id": 4,
+    "texto": "Un buen entrenador no se mide por la cantidad de Pokemon que tiene, sino por la relación que tiene con ellos.",
+    "categoria": "motivacion"
+  },
+  {
+    "id": 5,
+    "texto": "En el mundo Pokemon, cada día es una nueva aventura. ¡Nunca sabes qué Pokemon te espera al siguiente paso!",
+    "categoria": "aventura"
+  },
+  {
+    "id": 6,
+    "texto": "El verdadero poder no está en los ataques, sino en el corazón del entrenador y su Pokemon.",
+    "categoria": "motivacion"
+  },
+  {
+    "id": 7,
+    "texto": "Los Team Rocket pueden intentar una y otra vez, pero la persistencia es la clave del éxito!",
+    "categoria": "team-rocket"
+  },
+  {
+    "id": 8,
+    "texto": "Un Pokemon legendario no te hace mejor entrenador. Lo que te hace mejor es la dedicación y el cariño.",
+    "categoria": "legendario"
+  },
+  {
+    "id": 9,
+    "texto": "Las Pokeballs son más que herramientas: son el lazo que une a entrenador y Pokemon.",
+    "categoria": "pokeball"
+  },
+  {
+    "id": 10,
+    "texto": "Del huevo al Dragón: la evolución es un proceso que toma tiempo, dedicación y mucho entrenamiento.",
+    "categoria": "evolucion"
+  },
+  {
+    "id": 11,
+    "texto": "Cada región tiene sus desafíos, pero también sus recompensas. ¡Sigue adelante, entrenador!",
+    "categoria": "aventura"
+  },
+  {
+    "id": 12,
+    "texto": "El tipo de Pokemon que elijas no define tu estilo de entrenador. Es tu forma de jugar la que te hace único.",
+    "categoria": "general"
+  },
+  {
+    "id": 13,
+    "texto": "Los Pokemon son más que criaturas de batalla. Son compañeros, amigos y familia.",
+    "categoria": "amistad"
+  },
+  {
+    "id": 14,
+    "texto": "Nunca subestimes a un Magikarp. Detrás de ese Salpicadura hay un Gyarados esperando.",
+    "categoria": "evolucion"
+  },
+  {
+    "id": 15,
+    "texto": "Ash nunca se rindió, y nosotros tampoco. ¡La lucha por ser el mejor nunca termina!",
+    "categoria": "anime"
+  },
+  {
+    "id": 16,
+    "texto": "Cada batalla es una oportunidad para aprender. Incluso la derrota te hace más fuerte.",
+    "categoria": "batalla"
+  },
+  {
+    "id": 17,
+    "texto": "El mundo Pokemon está lleno de misterios. ¡Nunca dejes de explorar y descubrir!",
+    "categoria": "aventura"
+  },
+  {
+    "id": 18,
+    "texto": "Tu equipo Pokemon refleja tu personalidad. ¡Elige sabiamente y atrévete a ser diferente!",
+    "categoria": "general"
+  },
+  {
+    "id": 19,
+    "texto": "La verdadera riqueza no está en los Pokemon raros, sino en las experiencias que vives con ellos.",
+    "categoria": "motivacion"
+  },
+  {
+    "id": 20,
+    "texto": "Como dijo el Profesor Oak: ¡El mundo Pokemon espera por ti! Sal y atrapa todos los que puedas.",
+    "categoria": "aventura"
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "titulo": "Torneo Regional Pokemon",
+    "descripcion": "Competencia oficial para entrenadores de nivel intermedio y avanzado.",
+    "fecha": "Proximo sabado",
+    "hora": "10:00 AM - 6:00 PM",
+    "premios": "Medalla de campeon + booster packs exclusivos",
+    "reglas": "Formato standard, 6 Pokemon por equipo, best of 3"
+  },
+  {
+    "id": 2,
+    "titulo": "Batalla Libre Pokemon",
+    "descripcion": "Torneo informal donde cualquier estrategia es valida.",
+    "fecha": "Cada viernes",
+    "hora": "7:00 PM - 9:00 PM",
+    "premios": "Puntos de ranking + Pokemon exclusivos",
+    "reglas": "Sin restricciones, todos los tipos permitidos"
+  },
+  {
+    "id": 3,
+    "titulo": "Campeonato de Pokemon GO",
+    "descripcion": "Competencia de combate en Pokemon GO con los mejores jugadores.",
+    "fecha": "Proximo domingo",
+    "hora": "2:00 PM - 5:00 PM",
+    "premios": "PokeCoins + Pokemon legendary garantizado",
+    "reglas": "Formato Great League, 3 Pokemon por equipo"
+  },
+  {
+    "id": 4,
+    "titulo": "Torneo de Nuevos Entrenadores",
+    "descripcion": "Para principiantes que recien empiezan en el mundo Pokemon.",
+    "fecha": "Cada miercoles",
+    "hora": "4:00 PM - 6:00 PM",
+    "premios": "Pokeballs premium + Pokemon starter raros",
+    "reglas": "Pokemon nivel 50 maximo, sin legendarios"
+  },
+  {
+    "id": 5,
+    "titulo": "Campeonato de Cartas Pokemon",
+    "descripcion": "Torneo de cartas coleccionables con el nuevo set.",
+    "fecha": "Proximo sabado",
+    "hora": "11:00 AM - 4:00 PM",
+    "premios": "Booster packs + cartas raras garantizadas",
+    "reglas": "Formato standard, 60 cartas por mazo"
+  },
+  {
+    "id": 6,
+    "titulo": "Raid Boss Challenge",
+    "descripcion": "Desafío colectivo para derrotar a todos los legendary raids del dia.",
+    "fecha": "Cada sabado",
+    "hora": "12:00 PM - 8:00 PM",
+    "premios": "Caramelos raros + Pokemon legendary",
+    "reglas": " participar en al menos 3 raids para calificar"
+  },
+  {
+    "id": 7,
+    "titulo": "Torneo de Doble Batalla",
+    "descripcion": "Formato de doble batalla para estrategas avanzados.",
+    "fecha": "Proximo viernes",
+    "hora": "6:00 PM - 9:00 PM",
+    "premios": "Objetos raros + medalla de estratega",
+    "reglas": "2 Pokemon por equipo, formato doble"
+  },
+  {
+    "id": 8,
+    "titulo": "Maraton de Pokemon",
+    "descripcion": "Jugaremos todos los juegos de Pokemon en secuencia.",
+    "fecha": "Este fin de semana",
+    "hora": "9:00 AM - 9:00 PM",
+    "premios": "Pokemon shiny garantizado + acceso anticipado",
+    "reglas": "Sin pausas largas, avance continuo"
+  },
+  {
+    "id": 9,
+    "titulo": "Concurso de Cosplay Pokemon",
+    "descripcion": "Compitiendo disfrazados de tus Pokemon favoritos.",
+    "fecha": "Proximo domingo",
+    "hora": "3:00 PM - 6:00 PM",
+    "premios": "Figuras coleccionables + tarjeta de regalo",
+    "reglas": "Disfraz original, pose creativa, baile corto"
+  },
+  {
+    "id": 10,
+    "titulo": "Torneo Relámpago",
+    "descripcion": "Torneo express con partidas rapidas.",
+    "fecha": "Hoy",
+    "hora": "8:00 PM - 9:00 PM",
+    "premios": "Puntos dobles + Pokemon aleatorio raro",
+    "reglas": "Partidas de 3 minutos, formato random"
+  }
+]

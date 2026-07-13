@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "producto": "Peluche Pikachu Gigante",
+    "precio": "$25.00",
+    "descripcion": "Peluche oficial de Pikachu de 50cm, super suave y detallado.",
+    "disponible": true,
+    "categoria": "peluches"
+  },
+  {
+    "id": 2,
+    "producto": "Set de Cartas Pokemon booster",
+    "precio": "$12.00",
+    "descripcion": "Paquete de 10 cartas aleatorias con posibilidad de cartas raras.",
+    "disponible": true,
+    "categoria": "cartas"
+  },
+  {
+    "id": 3,
+    "producto": "Figura Charizard Mega",
+    "precio": "$45.00",
+    "descripcion": "Figura coleccion de Charizard Mega con efecto de fuego.",
+    "disponible": true,
+    "categoria": "figuras"
+  },
+  {
+    "id": 4,
+    "producto": "Camiseta Team Rocket",
+    "precio": "$18.00",
+    "descripcion": "Camiseta oficial con el logo de Team Rocket.",
+    "disponible": true,
+    "categoria": "ropa"
+  },
+  {
+    "id": 5,
+    "producto": "Taza Pokeball",
+    "precio": "$10.00",
+    "descripcion": "Taza termica con diseño de Pokeball que cambia de color con el calor.",
+    "disponible": true,
+    "categoria": "accesorios"
+  },
+  {
+    "id": 6,
+    "producto": "Poster Pokemon Legendarios",
+    "precio": "$8.00",
+    "descripcion": "Poster de 60x90cm con todos los Pokemon legendarios de 1ra generacion.",
+    "disponible": true,
+    "categoria": "decoracion"
+  },
+  {
+    "id": 7,
+    "producto": "Set de Llaveros Pokemon",
+    "precio": "$15.00",
+    "descripcion": "Paquete de 6 llaveros metalicos con los starters de Kanto.",
+    "disponible": true,
+    "categoria": "accesorios"
+  },
+  {
+    "id": 8,
+    "producto": "Gorra Pokeball",
+    "precio": "$20.00",
+    "descripcion": "Gorra oficial con el diseño de la Pokeball, ajustable.",
+    "disponible": true,
+    "categoria": "ropa"
+  },
+  {
+    "id": 9,
+    "producto": "Album de Figuras Pokemon",
+    "precio": "$30.00",
+    "descripcion": "Album para coleccionar figuras pequenas, capacidad para 100 figuras.",
+    "disponible": true,
+    "categoria": "figuras"
+  },
+  {
+    "id": 10,
+    "producto": "Set de Stickers Pokemon",
+    "precio": "$5.00",
+    "descripcion": "Paquete de 50 stickers adhesivos de Pokemon variados.",
+    "disponible": true,
+    "categoria": "accesorios"
+  }
+]

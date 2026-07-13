@@ -1,0 +1,98 @@
+[
+  {
+    "id": "primera-vez",
+    "nombre": "Primera Vez",
+    "descripcion": "Envió su primer mensaje en el grupo",
+    "puntosBonus": 5,
+    "requisito": "Enviar 1 mensaje",
+    "icono": "Star"
+  },
+  {
+    "id": "activo",
+    "nombre": "Activo",
+    "descripcion": "Envió 50 mensajes en una semana",
+    "puntosBonus": 10,
+    "requisito": "50 mensajes en una semana",
+    "icono": "Fire"
+  },
+  {
+    "id": "maestro-pokemon",
+    "nombre": "Maestro Pokemon",
+    "descripcion": "Respondió correctamente 10 quizzes",
+    "puntosBonus": 20,
+    "requisito": "10 quizzes correctos",
+    "icono": "Brain"
+  },
+  {
+    "id": "leyenda",
+    "nombre": "Leyenda",
+    "descripcion": "Acumuló 100 puntos totales",
+    "puntosBonus": 15,
+    "requisito": "100 puntos acumulados",
+    "icono": "Crown"
+  },
+  {
+    "id": "estratega",
+    "nombre": "Estratega",
+    "descripcion": "Ganó 5 pokebattles",
+    "puntosBonus": 15,
+    "requisito": "5 pokebattles ganadas",
+    "icono": "Sword"
+  },
+  {
+    "id": "coleccionista",
+    "nombre": "Coleccionista",
+    "descripcion": "Vio 20 Pokemon diferentes con el comando !pokemon",
+    "puntosBonus": 10,
+    "requisito": "20 Pokemon vistos",
+    "icono": "Album"
+  },
+  {
+    "id": "social",
+    "nombre": "Social",
+    "descripcion": "Interactuó en 10 conversaciones diferentes",
+    "puntosBonus": 5,
+    "requisito": "10 interacciones en grupo",
+    "icono": "People"
+  },
+  {
+    "id": "nocturno",
+    "nombre": "Nocturno",
+    "descripcion": "Envió mensajes después de medianoche",
+    "puntosBonus": 3,
+    "requisito": "Enviar mensaje entre 12AM y 5AM",
+    "icono": "Moon"
+  },
+  {
+    "id": "matutino",
+    "nombre": "Matutino",
+    "descripcion": "Envió mensajes antes de las 7AM",
+    "puntosBonus": 3,
+    "requisito": "Enviar mensaje entre 5AM y 7AM",
+    "icono": "Sun"
+  },
+  {
+    "id": "rival",
+    "nombre": "Rival",
+    "descripcion": "Desafió a 5 personas diferentes a pokebattle",
+    "puntosBonus": 8,
+    "requisito": "5 pokebattles desafiadas",
+    "icono": "VS"
+  },
+  {
+    "id": "comerciante",
+    "nombre": "Comerciante",
+    "descripcion": "Participó en 3 intercambios de Pokemon",
+    "puntosBonus": 10,
+    "requisito": "3 intercambios realizados",
+    "icono": "Exchange"
+  },
+  {
+    "id": "veterano",
+    "nombre": "Veterano",
+    "descripcion": "Lleva 4 semanas activo en la comunidad",
+    "puntosBonus": 25,
+    "requisito": "4 semanas de actividad",
+    "icono": "Medal"
+  }
+]

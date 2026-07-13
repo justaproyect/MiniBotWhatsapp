@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "producto": "Set de cartas Pokemon Base Set",
+    "descripcion": "100 cartas originales de la primera edicion, incluye Charizard holografico.",
+    "precioInicial": 50,
+    "pujaActual": 75,
+    "vendedor": "PokemonCollector",
+    "tiempoRestante": "2 horas"
+  },
+  {
+    "id": 2,
+    "producto": "Figura de Mewtwo Premium",
+    "descripcion": "Figura de coleccion de 30cm con base iluminada y certificado de autenticidad.",
+    "precioInicial": 30,
+    "pujaActual": 45,
+    "vendedor": "FigurasRaras",
+    "tiempoRestante": "4 horas"
+  },
+  {
+    "id": 3,
+    "producto": "Carta Pikachu Illustrator",
+    "descripcion": "La carta mas rara de Pokemon, solo 39 copias en el mundo.",
+    "precioInicial": 100,
+    "pujaActual": 150,
+    "vendedor": "CartasLegendarias",
+    "tiempoRestante": "1 hora"
+  },
+  {
+    "id": 4,
+    "producto": "Camiseta Pikachu Edicion Limitada",
+    "descripcion": "Camiseta oficial de Pokemon con diseño de Pikachu dorado.",
+    "precioInicial": 15,
+    "pujaActual": 22,
+    "vendedor": "PokemonFashion",
+    "tiempoRestante": "6 horas"
+  },
+  {
+    "id": 5,
+    "producto": "Consola Game Boy Color Pokemon",
+    "descripcion": "Consola original Game Boy Color con el juego Pokemon Rojo incluido.",
+    "precioInicial": 80,
+    "pujaActual": 110,
+    "vendedor": "RetroGaming",
+    "tiempoRestante": "3 horas"
+  },
+  {
+    "id": 6,
+    "producto": "Peluche Snorlax Gigante",
+    "descripcion": "Peluche de Snorlax de 1 metro de alto, super suave y esponjoso.",
+    "precioInicial": 25,
+    "pujaActual": 35,
+    "vendedor": "PeluchesPokemon",
+    "tiempoRestante": "5 horas"
+  },
+  {
+    "id": 7,
+    "producto": "Set de Pines Pokemon",
+    "descripcion": "Coleccion de 50 pines metalicos de todos los Pokemon de 1ra generacion.",
+    "precioInicial": 20,
+    "pujaActual": 30,
+    "vendedor": "PinesColection",
+    "tiempoRestante": "7 horas"
+  },
+  {
+    "id": 8,
+    "producto": "Alfombra Pokeball",
+    "descripcion": "Alfombra circular con diseño de Pokeball, diameter de 1.5 metros.",
+    "precioInicial": 35,
+    "pujaActual": 50,
+    "vendedor": "HogarPokemon",
+    "tiempoRestante": "4 horas"
+  },
+  {
+    "id": 9,
+    "producto": "Figuras de Evoluciones Eevee",
+    "descripcion": "Set de 8 figuras de Eevee y todas sus evoluciones.",
+    "precioInicial": 40,
+    "pujaActual": 60,
+    "vendedor": "EeveeLovers",
+    "tiempoRestante": "2 horas"
+  },
+  {
+    "id": 10,
+    "producto": "Mochila Pikachu",
+    "descripcion": "Mochila oficial de Pokemon con diseño de Pikachu, capacidad de 20 litros.",
+    "precioInicial": 30,
+    "pujaActual": 42,
+    "vendedor": "MochilasPokemon",
+    "tiempoRestante": "8 horas"
+  }
+]

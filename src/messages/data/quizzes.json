@@ -1,0 +1,212 @@
+[
+  {
+    "id": 1,
+    "pregunta": "¿Cual es el tipo de Pikachu?",
+    "opciones": ["A) Fuego", "B) Eléctrico", "C) Normal", "D) Lucha"],
+    "respuesta": "B",
+    "explicacion": "Pikachu es un Pokemon tipo Eléctrico, reconocido por sus mejillas rojas que almacenan electricidad."
+  },
+  {
+    "id": 2,
+    "pregunta": "¿Cuántas evoluciones tiene Eevee en total?",
+    "opciones": ["A) 5", "B) 6", "C) 7", "D) 8"],
+    "respuesta": "D",
+    "explicacion": "Eevee tiene 8 evoluciones: Vaporeon, Jolteon, Flareon, Espeon, Umbreon, Leafeon, Glaceon y Sylveon."
+  },
+  {
+    "id": 3,
+    "pregunta": "¿Quien es el creador de los Pokemon en el canon del juego?",
+    "opciones": ["A) Profesor Oak", "B) Profesor Elm", "C) Arceus", "D) Mew"],
+    "respuesta": "C",
+    "explicacion": "Arceus, el Pokemon Dios, creó el universo Pokemon junto con Dialga, Palkia y Giratina."
+  },
+  {
+    "id": 4,
+    "pregunta": "¿Quien es el rival de Ash en la región de Kanto?",
+    "opciones": ["A) Gary", "B) Paul", "C) Tracey", "D) Ritchie"],
+    "respuesta": "A",
+    "explicacion": "Gary Oak, el nieto del Profesor Oak, fue el principal rival de Ash en Kanto."
+  },
+  {
+    "id": 5,
+    "pregunta": "¿Que tipo es super efectivo contra los Pokemon tipo Dragón?",
+    "opciones": ["A) Fuego", "B) Eléctrico", "C) Hada", "D) Lucha"],
+    "respuesta": "C",
+    "explicacion": "El tipo Hada es super efectivo contra Dragón. Fue introducido en la 6ta generación específicamente para contrarrestar a los Dragón."
+  },
+  {
+    "id": 6,
+    "pregunta": "¿Cual es el Pokemon mas rápido de todos?",
+    "opciones": ["A) Deoxys Velocidad", "B) Electrode", "C) Ninjask", "D) Regieleki"],
+    "respuesta": "D",
+    "explicacion": "Regieleki tiene una velocidad base de 200 puntos, el mas alto de todos los Pokemon."
+  },
+  {
+    "id": 7,
+    "pregunta": "¿En que región se desarrolla Pokemon Rubí y Zafiro?",
+    "opciones": ["A) Johto", "B) Hoenn", "C) Sinnoh", "D) Unova"],
+    "respuesta": "B",
+    "explicacion": "Hoenn es la región basada en la isla de Kyushu, Japón. Es donde aparecieron los Pokemon Legendarios Groudon y Kyogre."
+  },
+  {
+    "id": 8,
+    "pregunta": "¿Cual es la habilidad signature de Gengar?",
+    "opciones": ["A) Levitación", "B) Cuerpo Maldito", "C) Sombra Trampa", "D) Insomnio"],
+    "respuesta": "B",
+    "explicacion": "Cuerpo Maldito tiene un 30% de probabilidad de deshabilitar el ultimo movimiento usado contra Gengar."
+  },
+  {
+    "id": 9,
+    "pregunta": "¿Que Pokemon se convierte en Gyarados al evolucionar?",
+    "opciones": ["A) Goldeen", "B) Magikarp", "C) Horsea", "D) Dratini"],
+    "respuesta": "B",
+    "explicacion": "Magikarp, el Pokemon mas débil, se convierte en el poderoso Gyarados al nivel 20."
+  },
+  {
+    "id": 10,
+    "pregunta": "¿Cuantos tipos de Pokemon existen actualmente?",
+    "opciones": ["A) 15", "B) 16", "C) 17", "D) 18"],
+    "respuesta": "D",
+    "explicacion": "Existen 18 tipos: Normal, Fuego, Agua, Eléctrico, Planta, Hielo, Lucha, Veneno, Tierra, Volador, Psíquico, Bicho, Roca, Fantasma, Dragón, Siniestro, Acero y Hada."
+  },
+  {
+    "id": 11,
+    "pregunta": "¿Que Pokemon starter de Kanto es de tipo fuego?",
+    "opciones": ["A) Charmander", "B) Squirtle", "C) Bulbasaur", "D) Pikachu"],
+    "respuesta": "A",
+    "explicacion": "Charmander es el starter de tipo fuego de Kanto. Evoluciona en Charmeleon y luego en Charizard."
+  },
+  {
+    "id": 12,
+    "pregunta": "¿Que Pokemon tiene la forma de una piedra preciosa y es tipo Roca?",
+    "opciones": ["A) Onix", "B) Geodude", "C) Clefairy", "D) Beldum"],
+    "respuesta": "B",
+    "explicacion": "Geodude es un Pokemon tipo Roca/Tierra que se parece a una piedra con brazos y piernas."
+  },
+  {
+    "id": 13,
+    "pregunta": "¿Cual es el Pokemon legendario que controla el tiempo?",
+    "opciones": ["A) Palkia", "B) Giratina", "C) Dialga", "D) Arceus"],
+    "respuesta": "C",
+    "explicacion": "Dialga controla el tiempo y es el Pokemon legendario de tipo Dragón/Acero de la 4ta generación."
+  },
+  {
+    "id": 14,
+    "pregunta": "¿Que Pokemon es conocido como el 'Pokemon Bebé' porque siempre esta llorando?",
+    "opciones": ["A) Togepi", "B) Happiny", "C) Munchlax", "D) Mantyke"],
+    "respuesta": "B",
+    "explicacion": "Happiny siempre lleva un huevo en su estómago y le gusta llorar, por eso se le llama el Pokemon Bebé."
+  },
+  {
+    "id": 15,
+    "pregunta": "¿En que generación se introdujo el tipo Hada?",
+    "opciones": ["A) 4ta generación", "B) 5ta generación", "C) 6ta generación", "D) 7ma generación"],
+    "respuesta": "C",
+    "explicacion": "El tipo Hada fue introducido en la 6ta generación (Pokemon X/Y) con Xerneas como representante principal."
+  },
+  {
+    "id": 16,
+    "pregunta": "¿Cual es la región de Pokemon Escarlata y Purpura?",
+    "opciones": ["A) Galar", "B) Alola", "C) Paldea", "D) Hisui"],
+    "respuesta": "C",
+    "explicacion": "Paldea es la región basada en la Península Ibérica (España/Portugal) de los juegos de la 9na generación."
+  },
+  {
+    "id": 17,
+    "pregunta": "¿Que Pokemon puede aprender el movimiento 'Surf' sin necesidad de TM?",
+    "opciones": ["A) Psyduck", "B) Lapras", "C) Milotic", "D) Todos los anteriores"],
+    "respuesta": "D",
+    "explicacion": "Psyduck, Lapras y Milotic pueden aprender Surf por nivel. Muchos Pokemon tipo Agua pueden hacerlo."
+  },
+  {
+    "id": 18,
+    "pregunta": "¿Cual es el Pokemon con la mayor cantidad de movimientos que puede aprender?",
+    "opciones": ["A) Mew", "B) Smeargle", "C) Ditto", "D) Celebi"],
+    "respuesta": "B",
+    "explicacion": "Smeargle puede aprender casi cualquier movimiento usando su habilidad 'Boceto' que copia el ultimo movimiento usado."
+  },
+  {
+    "id": 19,
+    "pregunta": "¿Que Pokemon es el guardián de los bosques en la región de Johto?",
+    "opciones": ["A) Celebi", "B) Virizion", "C) Shaymin", "D) Trevenant"],
+    "respuesta": "A",
+    "explicacion": "Celebi es el Pokemon del tiempo y del bosque, y puede viajar en el tiempo."
+  },
+  {
+    "id": 20,
+    "pregunta": "¿Cual es la estadística base total de un Pokemon Legendario típico?",
+    "opciones": ["A) 500", "B) 580", "C) 600", "D) 680"],
+    "respuesta": "B",
+    "explicacion": "La mayoría de los Pokemon legendarios tienen una estadística base total de 580 puntos."
+  },
+  {
+    "id": 21,
+    "pregunta": "¿Que Pokemon tiene la habilidad 'Guarda Maravilla' que lo hace inmune a casi todos los ataques?",
+    "opciones": ["A) Shedinja", "B) Sableye", "C) Spiritomb", "D) Eelektross"],
+    "respuesta": "A",
+    "explicacion": "Shedinja tiene Guarda Maravilla, que lo hace inmune a todo excepto ataques super efectivos. Solo tiene 1 HP."
+  },
+  {
+    "id": 22,
+    "pregunta": "¿En que episodio Pikachu se enfrenta por primera vez a Team Rocket?",
+    "opciones": ["A) Episodio 1", "B) Episodio 2", "C) Episodio 3", "D) Episodio 7"],
+    "respuesta": "B",
+    "explicacion": "En el episodio 2, Pikachu se enfrenta a Jessie, James y Meowth de Team Rocket por primera vez."
+  },
+  {
+    "id": 23,
+    "pregunta": "¿Que Pokemon puede evolucionar mientras duerme?",
+    "opciones": ["A) Slakoth", "B) Snorlax", "C) Clefairy", "D) Chansey"],
+    "respuesta": "A",
+    "explicacion": "Slakoth evoluciona en Vigoroth al subir de nivel, pero su evolución final Slaking es conocida por ser perezosa."
+  },
+  {
+    "id": 24,
+    "pregunta": "¿Que Pokemon es el símbolo de la marca Pokemon?",
+    "opciones": ["A) Pikachu", "B) Mew", "C) Charizard", "D) Eevee"],
+    "respuesta": "A",
+    "explicacion": "Pikachu es el mascote oficial de la franquicia Pokemon desde 1998."
+  },
+  {
+    "id": 25,
+    "pregunta": "¿Cual es el Pokemon mas alto de todos?",
+    "opciones": ["A) Wailord", "B) Celesteela", "C) Eternatus", "D) Primal Groudon"],
+    "respuesta": "B",
+    "explicacion": "Celesteela mide 9.2 metros de alto, convirtiéndolo en el Pokemon mas alto."
+  },
+  {
+    "id": 26,
+    "pregunta": "¿Que Pokemon tiene un movimiento signature llamado 'Voltio Tackler'?",
+    "opciones": ["A) Raichu", "B) Pikachu", "C) Electivire", "D) Luxray"],
+    "respuesta": "B",
+    "explicacion": "Voltio Tackler es un movimiento Eléctrico de Pikachu que causa daño pero también al usuario."
+  },
+  {
+    "id": 27,
+    "pregunta": "¿Cual es la región de los juegos Pokemon Oro y Plata?",
+    "opciones": ["A) Kanto", "B) Johto", "C) Hoenn", "D) Sinnoh"],
+    "respuesta": "B",
+    "explicacion": "Johto es la región de la segunda generación, basada en la región de Kansai, Japón."
+  },
+  {
+    "id": 28,
+    "pregunta": "¿Que Pokemon es el representante del sol en la leyenda de la región de Hoenn?",
+    "opciones": ["A) Kyogre", "B) Rayquaza", "C) Groudon", "D) Deoxys"],
+    "respuesta": "C",
+    "explicacion": "Groudon representa el sol y la tierra, mientras que Kyogre representa el mar y las lluvias."
+  },
+  {
+    "id": 29,
+    "pregunta": "¿Cual es el Pokemon que tiene 3 formas alternativas basadas en el clima?",
+    "opciones": ["A) Castform", "B) Cherrim", "C) Burmy", "D) Deerling"],
+    "respuesta": "A",
+    "explicacion": "Castform cambia su tipo y apariencia según el clima: Normal, Fuego (soleado), Agua (lluvia) y Hielo (nieve)."
+  },
+  {
+    "id": 30,
+    "pregunta": "¿En que año se lanzó Pokemon Go a nivel mundial?",
+    "opciones": ["A) 2015", "B) 2016", "C) 2017", "D) 2018"],
+    "respuesta": "B",
+    "explicacion": "Pokemon Go se lanzó el 6 de julio de 2016, revolucionando los juegos móviles con realidad aumentada."
+  }
+]

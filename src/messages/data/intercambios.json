@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "pokemon": "Magikarp",
+    "buscando": "Gyarados",
+    "descripcion": "Busco Magikarp para evolucionar. Tengo varios Pokemon para intercambiar a cambio.",
+    "nivel": "Bajo",
+    "rareza": "Comun"
+  },
+  {
+    "id": 2,
+    "pokemon": "Haunter",
+    "buscando": "Gengar",
+    "descripcion": "Necesito intercambiar Haunter para evolucionarlo a Gengar. Puedo ofrecer otros Pokemon fantasma.",
+    "nivel": "Medio",
+    "rareza": "Poco comun"
+  },
+  {
+    "id": 3,
+    "pokemon": "Machoke",
+    "buscando": "Machamp",
+    "descripcion": "Tengo Machoke listo para intercambio. Busco cualquier Pokemon raro a cambio.",
+    "nivel": "Alto",
+    "rareza": "Poco comun"
+  },
+  {
+    "id": 4,
+    "pokemon": "Kadabra",
+    "buscando": "Alakazam",
+    "descripcion": "Kadabra listo para evolucionar. Busco Pokemon de tipo psíquico a cambio.",
+    "nivel": "Alto",
+    "rareza": "Raro"
+  },
+  {
+    "id": 5,
+    "pokemon": "Graveler",
+    "buscando": "Golem",
+    "descripcion": "Graveler listo para intercambio. Ofrezco Pokemon de tipo tierra/roca.",
+    "nivel": "Medio",
+    "rareza": "Poco comun"
+  },
+  {
+    "id": 6,
+    "pokemon": "Onix",
+    "buscando": "Steelix",
+    "descripcion": "Busco intercambiar Onix con piedra metalica. Tengo varios Steelix disponibles.",
+    "nivel": "Alto",
+    "rareza": "Raro"
+  },
+  {
+    "id": 7,
+    "pokemon": "Scyther",
+    "buscando": "Scizor",
+    "descripcion": "Busco piedra metalica para evolucionar mi Scyther. Ofrezco Pokemon volador a cambio.",
+    "nivel": "Alto",
+    "rareza": "Raro"
+  },
+  {
+    "id": 8,
+    "pokemon": "Poliwhirl",
+    "buscando": "Poliwrath",
+    "descripcion": "Poliwhirl listo para evolucionar con piedra agua. Busco Pokemon de agua raros.",
+    "nivel": "Medio",
+    "rareza": "Poco comun"
+  },
+  {
+    "id": 9,
+    "pokemon": "Seadra",
+    "buscando": "Kingdra",
+    "descripcion": "Busco escama dragón para evolucionar mi Seadra. Ofrezco Pokemon de dragón raros.",
+    "nivel": "Alto",
+    "rareza": "Raro"
+  },
+  {
+    "id": 10,
+    "pokemon": "Machop",
+    "buscando": "Machamp",
+    "descripcion": "Tengo varios Machop listos para entrenar. Busco Pokemon de lucha para intercambiar.",
+    "nivel": "Bajo",
+    "rareza": "Comun"
+  },
+  {
+    "id": 11,
+    "pokemon": "Geodude",
+    "buscando": "Golem",
+    "descripcion": "Geodude disponibles para intercambio. Busco Pokemon de tipo raro.",
+    "nivel": "Bajo",
+    "rareza": "Comun"
+  },
+  {
+    "id": 12,
+    "pokemon": "Abra",
+    "buscando": "Alakazam",
+    "descripcion": "Tengo Abra con habilidad especial. Busco Pokemon psíquicos raros.",
+    "nivel": "Bajo",
+    "rareza": "Comun"
+  },
+  {
+    "id": 13,
+    "pokemon": "Cubone",
+    "buscando": "Marowak",
+    "descripcion": "Cubone listo para evolucionar. Busco Pokemon de tipo tierra o fuego.",
+    "nivel": "Medio",
+    "rareza": "Poco comun"
+  },
+  {
+    "id": 14,
+    "pokemon": "Psyduck",
+    "buscando": "Golduck",
+    "descripcion": "Psyduck con capacidad de Golduck disponible. Busco Pokemon de agua raros.",
+    "nivel": "Medio",
+    "rareza": "Poco comun"
+  },
+  {
+    "id": 15,
+    "pokemon": "Dratini",
+    "buscando": "Dragonite",
+    "descripcion": "Tengo Dratini listo para entrenar. Busco Pokemon legendarios o muy raros a cambio.",
+    "nivel": "Alto",
+    "rareza": "Muy raro"
+  }
+]

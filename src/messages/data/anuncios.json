@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "titulo": "Nuevo parche de Pokemon Escarlata y Purpura",
+    "descripcion": "Game Freak ha anunciado un nuevo parche que corrige varios bugs y mejora el rendimiento del juego.",
+    "categoria": "juegos"
+  },
+  {
+    "id": 2,
+    "titulo": "Evento de raid especial",
+    "descripcion": "Durante este fin de semana, apareceran Rayquaza, Kyogre y Groudon en raids globales. No te lo pierdas!",
+    "categoria": "evento"
+  },
+  {
+    "id": 3,
+    "titulo": "Nuevos productos en la tienda Pokemon",
+    "descripcion": "Ya esta disponible la nueva linea de peluches de Eevee y sus evoluciones. Corre a comprarlos!",
+    "categoria": "tienda"
+  },
+  {
+    "id": 4,
+    "titulo": "Torneo regional anunciado",
+    "descripcion": "El proximo torneo regional se celebrara el proximo mes. Inscripciones abiertas para todos los entrenadores.",
+    "categoria": "torneo"
+  },
+  {
+    "id": 5,
+    "titulo": "Actualizacion de Pokemon GO",
+    "descripcion": "Pokemon GO recibe una gran actualizacion con nuevos Pokemon de la 9na generacion y mejoras en el modo combate.",
+    "categoria": "juegos"
+  },
+  {
+    "id": 6,
+    "titulo": "Rifa especial de coleccion",
+    "descripcion": "Sortearemos un set completo de cartas Pokemon de la edicion limitada. Participa comprando tu boleto!",
+    "categoria": "rifa"
+  },
+  {
+    "id": 7,
+    "titulo": "Nueva pelicula de Pokemon anunciada",
+    "descripcion": "Se ha confirmado una nueva pelicula de Pokemon para finales de ano. Los fans estan emocionados!",
+    "categoria": "anime"
+  },
+  {
+    "id": 8,
+    "titulo": "Evento de intercambio especial",
+    "descripcion": "Este fin de semana habra un evento de intercambio donde podras conseguir Pokemon version exclusiva.",
+    "categoria": "evento"
+  },
+  {
+    "id": 9,
+    "titulo": "Mantenimiento programado",
+    "descripcion": "Los servidores de Pokemon estaran en mantenimiento el proximo martes de 2:00 a 6:00 AM. Planifica tu juego.",
+    "categoria": "sistema"
+  },
+  {
+    "id": 10,
+    "titulo": "Concurso de arte Pokemon",
+    "descripcion": "Participa en nuestro concurso de arte Pokemon y gana premios exclusivos. Envia tu arte antes del viernes.",
+    "categoria": "evento"
+  },
+  {
+    "id": 11,
+    "titulo": "Subasta de cartas raras",
+    "descripcion": "Hoy tendremos una subasta especial con cartas holográficas de la primera edición. No te lo pierdas!",
+    "categoria": "subasta"
+  },
+  {
+    "id": 12,
+    "titulo": "Nuevo set de cartas Pokemon",
+    "descripcion": "Se ha anunciado el nuevo set de cartas 'Fuerzas Brillantes' con 200 nuevas cartas coleccionables.",
+    "categoria": "tienda"
+  },
+  {
+    "id": 13,
+    "titulo": "Campeonato mundial de Pokemon",
+    "descripcion": "El campeonato mundial de Pokemon se celebrara en Japón este ano. Los mejores entrenadores del mundo competiran.",
+    "categoria": "torneo"
+  },
+  {
+    "id": 14,
+    "titulo": "Pokemon Home actualizado",
+    "descripcion": "Pokemon Home recibe una actualizacion que permite transferir Pokemon de mas juegos. Aprovecha para completar tu Pokedex.",
+    "categoria": "juegos"
+  },
+  {
+    "id": 15,
+    "titulo": "Oferta especial en la tienda",
+    "descripcion": "Durante esta semana tendremos descuentos de hasta el 50% en productos seleccionados de Pokemon.",
+    "categoria": "tienda"
+  }
+]
