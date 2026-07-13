@@ -1,5 +1,5 @@
 const { MongoClient, Binary } = require('mongodb');
-const { initAuthCreds, BufferJSON } = require('@whiskeysockets/baileys');
+const { initAuthCreds } = require('@whiskeysockets/baileys');
 
 const MONGO_URI = process.env.MONGO_URI || null;
 
@@ -30,18 +30,61 @@ async function connectMongo() {
   }
 }
 
-function replacer(key, value) {
-  if (value instanceof Buffer) {
-    return { $type: 'Buffer', data: Array.from(value) };
-  }
-  return value;
+function serialize(data) {
+  return JSON.stringify(data, (key, value) => {
+    if (value instanceof Buffer) {
+      return { __t: 'Buffer', __v: Array.from(value) };
+    }
+    if (value instanceof Uint8Array) {
+      return { __t: 'Buffer', __v: Array.from(value) };
+    }
+    if (value && value.type === 'Buffer' && Array.isArray(value.data)) {
+      return { __t: 'Buffer', __v: value.data };
+    }
+    return value;
+  });
 }
 
-function reviver(key, value) {
-  if (value && typeof value === 'object' && value.$type === 'Buffer' && Array.isArray(value.data)) {
-    return Buffer.from(value.data);
+function deserialize(str) {
+  return JSON.parse(str, (key, value) => {
+    if (value && value.__t === 'Buffer' && Array.isArray(value.__v)) {
+      return Buffer.from(value.__v);
+    }
+    return value;
+  });
+}
+
+function hasBinaryData(obj) {
+  if (!obj || typeof obj !== 'object') return false;
+  if (obj instanceof Binary) return true;
+  if (obj._bsontype === 'Binary') return true;
+  for (const key of Object.keys(obj)) {
+    if (hasBinaryData(obj[key])) return true;
   }
-  return value;
+  return false;
+}
+
+function deepClean(obj) {
+  if (!obj || typeof obj !== 'object') return obj;
+  if (obj instanceof Binary || obj._bsontype === 'Binary') {
+    try {
+      const str = obj.toString('utf8');
+      return JSON.parse(str, (k, v) => {
+        if (v && v.__t === 'Buffer' && Array.isArray(v.__v)) return Buffer.from(v.__v);
+        return v;
+      });
+    } catch (e) {
+      return null;
+    }
+  }
+  if (Array.isArray(obj)) {
+    return obj.map(item => deepClean(item));
+  }
+  const cleaned = {};
+  for (const [key, value] of Object.entries(obj)) {
+    cleaned[key] = deepClean(value);
+  }
+  return cleaned;
 }
 
 async function useMongoDBAuthState() {
@@ -54,17 +97,26 @@ async function useMongoDBAuthState() {
   const credsCollection = database.collection('baileys_creds');
   const keysCollection = database.collection('baileys_keys');
 
+  const credsDoc = await credsCollection.findOne({ _id: 'creds' });
+  if (credsDoc && credsDoc.data && hasBinaryData(credsDoc.data)) {
+    console.log('[MONGO] Detectados datos corruptos (Binary). Limpiando...');
+    await credsCollection.deleteMany({});
+    await keysCollection.deleteMany({});
+    console.log('[MONGO] Datos corruptos eliminados. Se creara sesion nueva.');
+  }
+
   async function readData(collection, key) {
     try {
       const doc = await collection.findOne({ _id: key });
       if (!doc || !doc.data) return null;
       if (typeof doc.data === 'string') {
-        return JSON.parse(doc.data, reviver);
+        return deserialize(doc.data);
       }
-      if (doc.data instanceof Binary || (doc.data && doc.data._bsontype === 'Binary')) {
-        const str = doc.data.toString('utf8');
-        await collection.updateOne({ _id: key }, { $set: { data: str } });
-        return JSON.parse(str, reviver);
+      if (hasBinaryData(doc.data)) {
+        const cleaned = deepClean(doc.data);
+        const serialized = serialize(cleaned);
+        await collection.updateOne({ _id: key }, { $set: { data: serialized } });
+        return cleaned;
       }
       return doc.data;
     } catch (e) {
@@ -74,7 +126,7 @@ async function useMongoDBAuthState() {
 
   async function writeData(collection, key, data) {
     try {
-      const serialized = JSON.stringify(data, replacer);
+      const serialized = serialize(data);
       await collection.updateOne(
         { _id: key },
         { $set: { data: serialized } },
@@ -117,14 +169,14 @@ async function useMongoDBAuthState() {
     await writeData(credsCollection, 'creds', state.creds);
   }
 
-  console.log('[MONGO] Estado de autenticación cargado desde MongoDB');
+  console.log('[MONGO] Estado de autenticacion cargado desde MongoDB');
   return { state, saveCreds };
 }
 
 async function closeMongo() {
   if (client) {
     await client.close();
-    console.log('[MONGO] Conexión cerrada');
+    console.log('[MONGO] Conexion cerrada');
   }
 }
 
