@@ -10,39 +10,36 @@ let scheduledTask = null;
 let queueTask = null;
 
 async function getPreGeneratedContent(groupType) {
-  if (!config.MONGO_URI) return null;
+  if (!config.ORCHESTRATOR_URL) return null;
   try {
-    const { MongoClient } = require('mongodb');
-    const client = new MongoClient(config.MONGO_URI);
-    await client.connect();
-    const db = client.db(config.MONGO_DB || 'pokemon_bots');
-    const today = new Date().toISOString().split('T')[0];
-    const content = await db.collection('generated_content').findOne({
-      date: today,
-      groupType: groupType,
-      status: 'generated',
-    });
-    await client.close();
-    return content;
+    const response = await axios.get(`${config.ORCHESTRATOR_URL}/api/pendientes`, { timeout: 10000 });
+    if (!response.data.success) return null;
+
+    const posts = response.data.posts;
+    const matchingPost = posts.find(p => p.groupType === groupType && p.status === 'approved');
+
+    if (matchingPost) {
+      console.log(`[SCHEDULER] Post aprobado encontrado: ${matchingPost.postId}`);
+      return matchingPost;
+    }
+    return null;
   } catch (e) {
-    console.log('[SCHEDULER] No se pudo leer contenido pre-generado:', e.message);
+    console.log('[SCHEDULER] No se pudo conectar con Orchestrator:', e.message);
     return null;
   }
 }
 
 async function markContentSent(postId, groupType) {
-  if (!config.MONGO_URI) return;
+  if (!config.ORCHESTRATOR_URL) return;
   try {
-    const { MongoClient } = require('mongodb');
-    const client = new MongoClient(config.MONGO_URI);
-    await client.connect();
-    const db = client.db(config.MONGO_DB || 'pokemon_bots');
-    await db.collection('generated_content').updateOne(
-      { postId: postId },
-      { $set: { status: 'sent', sentAt: new Date() }, $push: { sentToGroups: groupType } }
-    );
-    await client.close();
-  } catch (e) {}
+    await axios.post(`${config.ORCHESTRATOR_URL}/api/marcar-enviado`, {
+      postId,
+      groupType,
+    });
+    console.log(`[SCHEDULER] Post ${postId} marcado como enviado`);
+  } catch (e) {
+    console.log('[SCHEDULER] Error marcando post:', e.message);
+  }
 }
 
 async function downloadImage(url) {
