@@ -3,9 +3,12 @@ const fs = require('fs');
 const path = require('path');
 const config = require('./config');
 const queue = require('./queue');
+const multer = require('multer');
+const XLSX = require('xlsx');
 
 const router = express.Router();
 const CONTENT_PATH = path.join(__dirname, 'data', 'custom-content.json');
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
 
 function loadContent() {
   try {
@@ -114,6 +117,101 @@ router.get('/queue/list', (req, res) => {
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
   }
+});
+
+router.post('/queue/upload-excel', upload.single('excel'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'No se subio ningun archivo' });
+    }
+
+    const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+    const rows = XLSX.utils.sheet_to_json(sheet);
+
+    if (rows.length === 0) {
+      return res.status(400).json({ success: false, error: 'El Excel esta vacio' });
+    }
+
+    const tiposValidos = ['general', 'compra', 'rifas', 'torneos', 'subastas', 'tienda', 'anuncios'];
+    let agregados = 0;
+    let errores = [];
+
+    rows.forEach((row, index) => {
+      const tipo = (row.tipo || row.Tipo || row.GRUPO || row.grupo || '').toLowerCase().trim();
+      const titulo = row.titulo || row.Titulo || row.TITULO || '';
+      const contenido = row.contenido || row.Contenido || row.CONTENIDO || row.mensaje || row.Mensaje || '';
+      const imageUrl = row.imagen || row.Imagen || row.IMAGEN || row.image || row['URL imagen'] || null;
+      const videoUrl = row.video || row.Video || row.VIDEO || row['URL video'] || null;
+      const fecha = row.fecha || row.Fecha || row.FECHA || '';
+      const hora = row.hora || row.Hora || row.HORA || '08:00';
+
+      if (!tipo || !tiposValidos.includes(tipo)) {
+        errores.push(`Fila ${index + 1}: Tipo invalido "${tipo}"`);
+        return;
+      }
+      if (!contenido) {
+        errores.push(`Fila ${index + 1}: Sin contenido`);
+        return;
+      }
+      if (!fecha) {
+        errores.push(`Fila ${index + 1}: Sin fecha`);
+        return;
+      }
+
+      const fechaStr = String(fecha);
+      let fechaFormateada = fechaStr;
+      if (fechaStr.includes('/')) {
+        const parts = fechaStr.split('/');
+        if (parts.length === 3) {
+          fechaFormateada = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+        }
+      }
+
+      queue.addItem({
+        tipo,
+        titulo,
+        contenido,
+        imageUrl: imageUrl || null,
+        videoUrl: videoUrl || null,
+        fecha: fechaFormateada,
+        hora: String(hora).length === 5 ? hora : '08:00',
+      });
+      agregados++;
+    });
+
+    let mensaje = `${agregados} items agregados a la cola`;
+    if (errores.length > 0) {
+      mensaje += `. ${errores.length} errores: ${errores.slice(0, 3).join('; ')}`;
+    }
+
+    res.json({ success: true, message: mensaje, agregados, errores });
+  } catch (e) {
+    res.status(500).json({ success: false, error: 'Error leyendo Excel: ' + e.message });
+  }
+});
+
+router.get('/queue/template', (req, res) => {
+  const wb = XLSX.utils.book_new();
+  const data = [
+    { tipo: 'general', titulo: 'Pokemon del dia', contenido: 'Hoy te presentamos a un Pokemon especial...', imagen: 'https://i.imgur.com/ejemplo.jpg', video: '', fecha: '2026-07-15', hora: '08:00' },
+    { tipo: 'compra', titulo: 'Intercambio', contenido: 'Busco Pokemon tipo fuego para intercambiar...', imagen: '', video: '', fecha: '2026-07-15', hora: '08:00' },
+    { tipo: 'rifas', titulo: 'Rifa especial', contenido: 'Rifa de consola Game Boy Color...', imagen: 'https://i.imgur.com/ejemplo2.jpg', video: '', fecha: '2026-07-16', hora: '09:00' },
+    { tipo: 'torneos', titulo: 'Raid Hour', contenido: 'Hoy es dia de raid! Organiza tu equipo...', imagen: '', video: '', fecha: '2026-07-16', hora: '16:00' },
+    { tipo: 'subastas', titulo: 'Subasta Pokemon', contenido: 'Carta rara Charizard base set...', imagen: '', video: '', fecha: '2026-07-17', hora: '10:00' },
+    { tipo: 'tienda', titulo: 'Ofertas', contenido: 'Descuentos en la tienda oficial...', imagen: 'https://i.imgur.com/ejemplo3.jpg', video: '', fecha: '2026-07-17', hora: '08:00' },
+    { tipo: 'anuncios', titulo: 'Aviso importante', contenido: 'Mantenimiento programado del bot...', imagen: '', video: '', fecha: '2026-07-18', hora: '08:00' },
+  ];
+  const ws = XLSX.utils.json_to_sheet(data);
+  ws['!cols'] = [
+    { wch: 12 }, { wch: 20 }, { wch: 50 }, { wch: 40 }, { wch: 40 }, { wch: 12 }, { wch: 8 },
+  ];
+  XLSX.utils.book_append_sheet(wb, ws, 'Contenido');
+  const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+  res.setHeader('Content-Disposition', 'attachment; filename=plantilla-contenido-bot.xlsx');
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.send(buffer);
 });
 
 function getAdminHTML(content, queueItems) {
@@ -551,6 +649,21 @@ function getAdminHTML(content, queueItems) {
           <button class="btn btn-add" onclick="addQueueItem()">➕ Agregar a la cola</button>
         </div>
 
+        <div class="queue-form" style="border: 2px dashed #ffcb05; background: rgba(255,203,5,0.05);">
+          <h3>📊 Subir Excel con contenido masivo</h3>
+          <p style="color:#aaa; font-size:0.85em; margin-bottom:15px;">
+            Sube un Excel con todo el contenido programado. Descarga la plantilla primero.
+          </p>
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <a href="/admin/queue/template" class="btn btn-preview" style="text-decoration:none;">📥 Descargar plantilla</a>
+            <label class="btn btn-add" style="cursor:pointer;">
+              📁 Seleccionar Excel
+              <input type="file" id="excel-file" accept=".xlsx,.xls" style="display:none;" onchange="uploadExcel()">
+            </label>
+          </div>
+          <div id="excel-status" style="margin-top:10px; font-size:0.85em;"></div>
+        </div>
+
         <h3 style="color:#ffcb05; margin-bottom:15px;">📋 Contenido programado</h3>
         <div id="queue-list">
           ${queueItems.length === 0
@@ -722,6 +835,36 @@ function getAdminHTML(content, queueItems) {
       } catch (e) {
         showToast('❌ Error', 'error');
       }
+    }
+
+    async function uploadExcel() {
+      const fileInput = document.getElementById('excel-file');
+      const status = document.getElementById('excel-status');
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      status.innerHTML = '<span style="color:#ff9800;">⏳ Subiendo y procesando...</span>';
+
+      const formData = new FormData();
+      formData.append('excel', file);
+
+      try {
+        const res = await fetch('/admin/queue/upload-excel', {
+          method: 'POST',
+          body: formData,
+        });
+        const result = await res.json();
+        if (result.success) {
+          status.innerHTML = '<span style="color:#4caf50;">✅ ' + result.message + '</span>';
+          showToast('✅ Excel procesado!', 'success');
+          setTimeout(() => location.reload(), 2000);
+        } else {
+          status.innerHTML = '<span style="color:#f44336;">❌ ' + result.error + '</span>';
+        }
+      } catch (e) {
+        status.innerHTML = '<span style="color:#f44336;">❌ Error de conexion</span>';
+      }
+      fileInput.value = '';
     }
 
     document.getElementById('queue-fecha').valueAsDate = new Date();
