@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
 
 const QUEUE_PATH = path.join(__dirname, 'data', 'content-queue.json');
 
@@ -16,7 +17,17 @@ function saveQueue(queue) {
   fs.writeFileSync(QUEUE_PATH, JSON.stringify(queue, null, 2), 'utf8');
 }
 
-function addItem(item) {
+async function downloadMedia(url) {
+  try {
+    const res = await axios.get(url, { responseType: 'arraybuffer', timeout: 30000 });
+    return Buffer.from(res.data).toString('base64');
+  } catch (e) {
+    console.error('[QUEUE] Error descargando media:', e.message);
+    return null;
+  }
+}
+
+async function addItem(item) {
   const queue = loadQueue();
   const newItem = {
     id: Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
@@ -25,11 +36,34 @@ function addItem(item) {
     contenido: item.contenido || '',
     imageUrl: item.imageUrl || null,
     videoUrl: item.videoUrl || null,
+    imageBase64: null,
+    videoBase64: null,
     fecha: item.fecha,
     hora: item.hora || '08:00',
     enviada: false,
     creada: new Date().toISOString(),
   };
+
+  if (item.imageUrl) {
+    console.log('[QUEUE] Descargando imagen:', item.imageUrl);
+    newItem.imageBase64 = await downloadMedia(item.imageUrl);
+    if (newItem.imageBase64) {
+      console.log('[QUEUE] Imagen guardada en base64');
+    } else {
+      console.log('[QUEUE] No se pudo descargar la imagen, se usara la URL');
+    }
+  }
+
+  if (item.videoUrl) {
+    console.log('[QUEUE] Descargando video:', item.videoUrl);
+    newItem.videoBase64 = await downloadMedia(item.videoUrl);
+    if (newItem.videoBase64) {
+      console.log('[QUEUE] Video guardado en base64');
+    } else {
+      console.log('[QUEUE] No se pudo descargar el video, se usara la URL');
+    }
+  }
+
   queue.items.push(newItem);
   saveQueue(queue);
   return newItem;

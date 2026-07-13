@@ -91,9 +91,9 @@ router.post('/test/:tipo', async (req, res) => {
   }
 });
 
-router.post('/queue/add', (req, res) => {
+router.post('/queue/add', async (req, res) => {
   try {
-    const item = queue.addItem(req.body);
+    const item = await queue.addItem(req.body);
     res.json({ success: true, item });
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
@@ -119,7 +119,7 @@ router.get('/queue/list', (req, res) => {
   }
 });
 
-router.post('/queue/upload-excel', upload.single('excel'), (req, res) => {
+router.post('/queue/upload-excel', upload.single('excel'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ success: false, error: 'No se subio ningun archivo' });
@@ -138,7 +138,7 @@ router.post('/queue/upload-excel', upload.single('excel'), (req, res) => {
     let agregados = 0;
     let errores = [];
 
-    rows.forEach((row, index) => {
+    for (const [index, row] of rows.entries()) {
       const tipo = (row.tipo || row.Tipo || row.GRUPO || row.grupo || '').toLowerCase().trim();
       const titulo = row.titulo || row.Titulo || row.TITULO || '';
       const contenido = row.contenido || row.Contenido || row.CONTENIDO || row.mensaje || row.Mensaje || '';
@@ -149,15 +149,15 @@ router.post('/queue/upload-excel', upload.single('excel'), (req, res) => {
 
       if (!tipo || !tiposValidos.includes(tipo)) {
         errores.push(`Fila ${index + 1}: Tipo invalido "${tipo}"`);
-        return;
+        continue;
       }
       if (!contenido) {
         errores.push(`Fila ${index + 1}: Sin contenido`);
-        return;
+        continue;
       }
       if (!fecha) {
         errores.push(`Fila ${index + 1}: Sin fecha`);
-        return;
+        continue;
       }
 
       const fechaStr = String(fecha);
@@ -169,7 +169,7 @@ router.post('/queue/upload-excel', upload.single('excel'), (req, res) => {
         }
       }
 
-      queue.addItem({
+      await queue.addItem({
         tipo,
         titulo,
         contenido,
@@ -179,7 +179,7 @@ router.post('/queue/upload-excel', upload.single('excel'), (req, res) => {
         hora: String(hora).length === 5 ? hora : '08:00',
       });
       agregados++;
-    });
+    }
 
     let mensaje = `${agregados} items agregados a la cola`;
     if (errores.length > 0) {

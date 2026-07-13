@@ -81,19 +81,25 @@ async function processQueue() {
           message = `*${item.titulo}*\n\n${message}`;
         }
 
-        if (item.imageUrl) {
+        if (item.imageBase64) {
+          const imageBuffer = Buffer.from(item.imageBase64, 'base64');
+          await sendMessage(groupId, { image: imageBuffer, caption: message });
+        } else if (item.videoBase64) {
+          const videoBuffer = Buffer.from(item.videoBase64, 'base64');
+          await sendMessage(groupId, { video: videoBuffer, caption: message });
+        } else if (item.imageUrl) {
           const imageBuffer = await downloadMedia(item.imageUrl);
           if (imageBuffer) {
             await sendMessage(groupId, { image: imageBuffer, caption: message });
           } else {
-            await sendMessage(groupId, { text: message + '\n\n(Image no disponible)' });
+            await sendMessage(groupId, { text: message });
           }
         } else if (item.videoUrl) {
           const videoBuffer = await downloadMedia(item.videoUrl);
           if (videoBuffer) {
             await sendMessage(groupId, { video: videoBuffer, caption: message });
           } else {
-            await sendMessage(groupId, { text: message + '\n\n(Video no disponible)' });
+            await sendMessage(groupId, { text: message });
           }
         } else {
           await sendMessage(groupId, { text: message });
