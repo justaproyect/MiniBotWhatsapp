@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const config = require('./config');
+const queue = require('./queue');
 
 const router = express.Router();
 const CONTENT_PATH = path.join(__dirname, 'data', 'custom-content.json');
@@ -21,7 +22,8 @@ function saveContent(content) {
 
 router.get('/', (req, res) => {
   const content = loadContent();
-  res.send(getAdminHTML(content));
+  const queueItems = queue.getAllItems();
+  res.send(getAdminHTML(content, queueItems));
 });
 
 router.post('/save', (req, res) => {
@@ -86,7 +88,35 @@ router.post('/test/:tipo', async (req, res) => {
   }
 });
 
-function getAdminHTML(content) {
+router.post('/queue/add', (req, res) => {
+  try {
+    const item = queue.addItem(req.body);
+    res.json({ success: true, item });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+router.post('/queue/delete', (req, res) => {
+  try {
+    const { id } = req.body;
+    queue.removeItem(id);
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+router.get('/queue/list', (req, res) => {
+  try {
+    const items = queue.getAllItems();
+    res.json({ success: true, items });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+function getAdminHTML(content, queueItems) {
   const grupos = [
     { tipo: 'general', nombre: 'General', color: '#ffcb05', icon: '🟡' },
     { tipo: 'compra', nombre: 'Compra y Venta', color: '#4caf50', icon: '🟢' },
@@ -147,6 +177,29 @@ function getAdminHTML(content) {
     `;
   }).join('');
 
+  const queueRows = queueItems.map(item => {
+    const statusClass = item.enviada ? 'sent' : 'pending';
+    const statusText = item.enviada ? 'Enviada' : 'Pendiente';
+    const dateStr = item.fecha + ' ' + item.hora;
+    return `
+      <tr class="${statusClass}">
+        <td>${item.titulo || '(Sin titulo)'}</td>
+        <td>${item.tipo}</td>
+        <td>${dateStr}</td>
+        <td><span class="badge badge-${statusClass}">${statusText}</span></td>
+        <td>
+          ${item.imageUrl ? '<span title="Tiene imagen">🖼️</span>' : ''}
+          ${item.videoUrl ? '<span title="Tiene video">🎬</span>' : ''}
+        </td>
+        <td>
+          ${!item.enviada ? '<button class="btn btn-sm btn-delete" onclick="deleteQueueItem(\\'' + item.id + '\\')">🗑️</button>' : ''}
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  const tipoOptions = grupos.map(g => `<option value="${g.tipo}">${g.icon} ${g.nombre}</option>`).join('');
+
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -162,7 +215,7 @@ function getAdminHTML(content) {
       min-height: 100vh;
       padding: 20px;
     }
-    .container { max-width: 800px; margin: 0 auto; }
+    .container { max-width: 900px; margin: 0 auto; }
     h1 {
       text-align: center;
       color: #ffcb05;
@@ -176,6 +229,31 @@ function getAdminHTML(content) {
       margin-bottom: 30px;
       font-size: 0.9em;
     }
+    .main-nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+    .main-nav-btn {
+      padding: 12px 24px;
+      border: 2px solid #333;
+      background: rgba(255,255,255,0.05);
+      color: #aaa;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: bold;
+      transition: all 0.3s;
+    }
+    .main-nav-btn:hover { background: rgba(255,255,255,0.1); }
+    .main-nav-btn.active {
+      background: rgba(255, 203, 5, 0.2);
+      color: #ffcb05;
+      border-color: #ffcb05;
+    }
+    .section { display: none; }
+    .section.active { display: block; }
     .tabs {
       display: flex;
       flex-wrap: wrap;
@@ -221,7 +299,7 @@ function getAdminHTML(content) {
       margin-bottom: 5px;
       font-size: 0.9em;
     }
-    .form-group input, .form-group textarea {
+    .form-group input, .form-group textarea, .form-group select {
       width: 100%;
       padding: 12px;
       border: 1px solid #333;
@@ -231,11 +309,17 @@ function getAdminHTML(content) {
       font-size: 0.95em;
       font-family: inherit;
     }
-    .form-group input:focus, .form-group textarea:focus {
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
       outline: none;
       border-color: #ffcb05;
     }
     .form-group textarea { resize: vertical; min-height: 120px; }
+    .form-group select option { background: #16213e; }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
     .help {
       margin-top: 8px;
       font-size: 0.75em;
@@ -276,6 +360,24 @@ function getAdminHTML(content) {
       font-size: 1em;
     }
     .btn-save:hover { background: rgba(255, 203, 5, 0.3); }
+    .btn-add {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4caf50;
+      border: 1px solid #4caf50;
+      padding: 12px 30px;
+      font-size: 1em;
+    }
+    .btn-add:hover { background: rgba(76, 175, 80, 0.3); }
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.8em;
+    }
+    .btn-delete {
+      background: rgba(244, 67, 54, 0.2);
+      color: #f44336;
+      border: 1px solid #f44336;
+    }
+    .btn-delete:hover { background: rgba(244, 67, 54, 0.3); }
     .preview-box {
       margin-top: 15px;
       padding: 15px;
@@ -293,6 +395,53 @@ function getAdminHTML(content) {
       background: rgba(22, 33, 62, 0.95);
       border-radius: 15px;
       border: 1px solid #333;
+    }
+    .queue-section {
+      background: rgba(22, 33, 62, 0.95);
+      border: 2px solid #333;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 20px;
+    }
+    .queue-form {
+      background: rgba(0,0,0,0.2);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .queue-form h3 {
+      color: #ffcb05;
+      margin-bottom: 15px;
+    }
+    .queue-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    .queue-table th, .queue-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #333;
+    }
+    .queue-table th {
+      color: #ffcb05;
+      font-size: 0.85em;
+      text-transform: uppercase;
+    }
+    .queue-table tr.sent { opacity: 0.5; }
+    .queue-table tr:hover { background: rgba(255,255,255,0.05); }
+    .badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.75em;
+      font-weight: bold;
+    }
+    .badge-pending { background: rgba(255, 152, 0, 0.2); color: #ff9800; }
+    .badge-sent { background: rgba(76, 175, 80, 0.2); color: #4caf50; }
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #888;
     }
     .toast {
       position: fixed;
@@ -339,33 +488,99 @@ function getAdminHTML(content) {
     }
     .toggle input:checked + .slider { background: #4caf50; }
     .toggle input:checked + .slider:before { transform: translateX(24px); }
-    .status-badge {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 0.75em;
-      margin-left: 10px;
-    }
-    .status-on { background: rgba(76,175,80,0.2); color: #4caf50; }
-    .status-off { background: rgba(244,67,54,0.2); color: #f44336; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🎮 Pokemon Bot - Panel Admin</h1>
-    <p class="subtitle">Edita el contenido que se envia automaticamente a las 8:00 AM</p>
+    <p class="subtitle">Administra el contenido de tu bot de WhatsApp</p>
 
-    <div class="tabs">${tabs}</div>
-    ${panels}
+    <div class="main-nav">
+      <button class="main-nav-btn active" onclick="showSection('diario')">📅 Contenido Diario</button>
+      <button class="main-nav-btn" onclick="showSection('cola')">📋 Cola de Contenido</button>
+    </div>
 
-    <div class="save-section">
-      <button class="btn btn-save" onclick="saveAll()">
-        💾 Guardar todo el contenido
-      </button>
+    <div id="section-diario" class="section active">
+      <p style="text-align:center; color:#aaa; margin-bottom:20px;">Contenido que se envia automaticamente todos los dias a las 8:00 AM</p>
+      <div class="tabs">${tabs}</div>
+      ${panels}
+      <div class="save-section">
+        <button class="btn btn-save" onclick="saveAll()">💾 Guardar todo el contenido</button>
+      </div>
+    </div>
+
+    <div id="section-cola" class="section">
+      <div class="queue-section">
+        <div class="queue-form">
+          <h3>➕ Agregar contenido a la cola</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Tipo de grupo</label>
+              <select id="queue-tipo">${tipoOptions}</select>
+            </div>
+            <div class="form-group">
+              <label>Titulo</label>
+              <input type="text" id="queue-titulo" placeholder="Ej: Oferta especial">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Contenido del mensaje</label>
+            <textarea id="queue-contenido" rows="4" placeholder="Escribe el contenido que se enviara..."></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>URL de imagen (opcional)</label>
+              <input type="url" id="queue-image" placeholder="https://i.imgur.com/imagen.jpg">
+            </div>
+            <div class="form-group">
+              <label>URL de video (opcional)</label>
+              <input type="url" id="queue-video" placeholder="https://example.com/video.mp4">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Fecha de envio</label>
+              <input type="date" id="queue-fecha">
+            </div>
+            <div class="form-group">
+              <label>Hora de envio</label>
+              <input type="time" id="queue-hora" value="08:00">
+            </div>
+          </div>
+          <button class="btn btn-add" onclick="addQueueItem()">➕ Agregar a la cola</button>
+        </div>
+
+        <h3 style="color:#ffcb05; margin-bottom:15px;">📋 Contenido programado</h3>
+        <div id="queue-list">
+          ${queueItems.length === 0
+            ? '<div class="empty-state">No hay contenido en la cola</div>'
+            : `<table class="queue-table">
+                <thead>
+                  <tr>
+                    <th>Titulo</th>
+                    <th>Tipo</th>
+                    <th>Fecha/Hora</th>
+                    <th>Estado</th>
+                    <th>Media</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>${queueRows}</tbody>
+              </table>`
+          }
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
+    function showSection(section) {
+      document.querySelectorAll('.main-nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('section-' + section).classList.add('active');
+    }
+
     function showTab(tipo) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -457,6 +672,58 @@ function getAdminHTML(content) {
         showToast('❌ Error de conexion', 'error');
       }
     }
+
+    async function addQueueItem() {
+      const tipo = document.getElementById('queue-tipo').value;
+      const titulo = document.getElementById('queue-titulo').value;
+      const contenido = document.getElementById('queue-contenido').value;
+      const imageUrl = document.getElementById('queue-image').value || null;
+      const videoUrl = document.getElementById('queue-video').value || null;
+      const fecha = document.getElementById('queue-fecha').value;
+      const hora = document.getElementById('queue-hora').value;
+
+      if (!contenido || !fecha) {
+        showToast('❌ Completa el contenido y la fecha', 'error');
+        return;
+      }
+
+      try {
+        const res = await fetch('/admin/queue/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tipo, titulo, contenido, imageUrl, videoUrl, fecha, hora }),
+        });
+        const result = await res.json();
+        if (result.success) {
+          showToast('✅ Agregado a la cola!', 'success');
+          setTimeout(() => location.reload(), 1000);
+        } else {
+          showToast('❌ Error', 'error');
+        }
+      } catch (e) {
+        showToast('❌ Error de conexion', 'error');
+      }
+    }
+
+    async function deleteQueueItem(id) {
+      if (!confirm('Eliminar este item de la cola?')) return;
+      try {
+        const res = await fetch('/admin/queue/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id }),
+        });
+        const result = await res.json();
+        if (result.success) {
+          showToast('✅ Eliminado', 'success');
+          setTimeout(() => location.reload(), 1000);
+        }
+      } catch (e) {
+        showToast('❌ Error', 'error');
+      }
+    }
+
+    document.getElementById('queue-fecha').valueAsDate = new Date();
   </script>
 </body>
 </html>`;
