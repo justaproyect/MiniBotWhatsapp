@@ -289,27 +289,23 @@ const COMANDOS = {
       const fs = require('fs');
       const path = require('path');
       const cacheDir = path.join(__dirname, '..', 'cache');
-      const cacheFile = path.join(cacheDir, 'test-image.jpg');
+      const cacheFile = path.join(cacheDir, 'test-image.png');
       try {
         if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
         if (fs.existsSync(cacheFile)) {
           const data = fs.readFileSync(cacheFile);
           return { type: 'image', imageBuffer: data, caption: '*Prueba de imagen (cache)*\n\nSi ves esta imagen, el bot puede enviar imagenes!' };
         }
-        const res = await axios.get('https://i.imgur.com/aWrt2dx.jpg', { responseType: 'arraybuffer', timeout: 15000 });
-        fs.writeFileSync(cacheFile, Buffer.from(res.data));
-        return { type: 'image', imageBuffer: Buffer.from(res.data), caption: '*Prueba de imagen*\n\nSi ves esta imagen, el bot puede enviar imagenes desde URLs!' };
+        const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png';
+        const res = await axios.get(url, { responseType: 'arraybuffer', timeout: 30000 });
+        const buf = Buffer.from(res.data);
+        fs.writeFileSync(cacheFile, buf);
+        return { type: 'image', imageBuffer: buf, caption: '*Prueba de imagen*\n\nSi ves esta imagen, el bot puede enviar imagenes!' };
       } catch (e) {
         if (fs.existsSync(cacheFile)) {
-          const data = fs.readFileSync(cacheFile);
-          return { type: 'image', imageBuffer: data, caption: '*Prueba de imagen (cache)*' };
+          return { type: 'image', imageBuffer: fs.readFileSync(cacheFile), caption: '*Prueba de imagen (cache)*' };
         }
-        try {
-          const res = await axios.get('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png', { responseType: 'arraybuffer', timeout: 15000 });
-          return { type: 'image', imageBuffer: Buffer.from(res.data), caption: '*Prueba de imagen (fallback)*\n\nPikachu dice hola!' };
-        } catch (e2) {
-          return 'Error: No se pudo descargar ninguna imagen';
-        }
+        return 'Error: No se pudo descargar imagen: ' + e.message;
       }
     },
   },
@@ -320,23 +316,31 @@ const COMANDOS = {
       const axios = require('axios');
       const fs = require('fs');
       const path = require('path');
+      const queue = require('./queue');
+      const cloudinary = require('./cloudinary');
       const cacheDir = path.join(__dirname, '..', 'cache');
       const cacheFile = path.join(cacheDir, 'test-video.mp4');
       try {
         if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
         if (fs.existsSync(cacheFile)) {
           const data = fs.readFileSync(cacheFile);
-          return { type: 'video', videoBuffer: data, caption: '*Prueba de video (cache)*' };
+          return { type: 'video', videoBuffer: data, caption: '*Prueba de video (cache)*\n\nSi ves este video, el bot puede enviar videos!' };
         }
-        const res = await axios.get('https://i.imgur.com/aWrt2dx.mp4', { responseType: 'arraybuffer', timeout: 60000 });
-        fs.writeFileSync(cacheFile, Buffer.from(res.data));
-        return { type: 'video', videoBuffer: Buffer.from(res.data), caption: '*Prueba de video*\n\nSi ves este video, el bot puede enviar videos!' };
+        const items = queue.getAllItems();
+        const videoItem = items.find(i => i.videoUrl && !i.enviada);
+        if (videoItem) {
+          console.log('[TESTVIDEO] Descargando desde cola:', videoItem.videoUrl);
+          const res = await axios.get(videoItem.videoUrl, { responseType: 'arraybuffer', timeout: 60000 });
+          const buf = Buffer.from(res.data);
+          fs.writeFileSync(cacheFile, buf);
+          return { type: 'video', videoBuffer: buf, caption: '*Prueba de video*\n\nSi ves este video, el bot puede enviar videos!' };
+        }
+        return '*No hay videos disponibles para probar.*\n\nSube un video desde el admin (/admin), agrégalo a la cola, y vuelve a intentar con *!testvideo*';
       } catch (e) {
         if (fs.existsSync(cacheFile)) {
-          const data = fs.readFileSync(cacheFile);
-          return { type: 'video', videoBuffer: data, caption: '*Prueba de video (cache)*' };
+          return { type: 'video', videoBuffer: fs.readFileSync(cacheFile), caption: '*Prueba de video (cache)*' };
         }
-        return 'Error: No se pudo descargar el video (' + e.message + ')';
+        return 'Error: No se pudo descargar video: ' + e.message;
       }
     },
   },
