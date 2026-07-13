@@ -6,6 +6,7 @@ const { getDailyQuiz } = require('./messages/quiz');
 const { getDailyMemeWithBuffer } = require('./messages/memes');
 const points = require('./points');
 const { getTodayActivity, getRandomActivity } = require('./dailyActivity');
+const ai = require('./ai');
 
 const COMANDOS = {
   ayuda: {
@@ -40,6 +41,9 @@ const COMANDOS = {
         '*Actividades:*',
         '!actividad - Reto del dia',
         '!reto - Reto random Pokemon',
+        '',
+        '*IA:*',
+        '!ia - Estado de la inteligencia artificial',
         '',
         '*Admin:*',
         '!registrar <tipo> - Registrar grupo',
@@ -617,6 +621,23 @@ const COMANDOS = {
       const activity = getRandomActivity();
       const result = activity.generate();
       return result.message;
+    },
+  },
+
+  ia: {
+    desc: 'Ver estado de la IA',
+    ejecutar: () => {
+      const stats = ai.getStats();
+      let msg = `*ESTADO DE LA IA*\n\n`;
+      msg += `Respuestas esta hora: ${stats.responseCount}/${stats.maxPerHour}\n`;
+      msg += `Probabilidad de responder: ${Math.round(stats.chance * 100)}%\n\n`;
+      msg += `*Palabras clave que activan la IA:*\n`;
+      msg += stats.triggers.join(', ') + '\n\n';
+      msg += `La IA responde cuando:\n`;
+      msg += `- Escribe una palabra clave\n`;
+      msg += `- O aleatoriamente (15% de probabilidad)\n\n`;
+      msg += `Maximo 5 respuestas por hora para no ser molesto`;
+      return msg;
     },
   },
 };

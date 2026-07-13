@@ -8,6 +8,7 @@ const config = require('./config');
 const { esComando, parsearComando, ejecutarComando } = require('./commands');
 const engagement = require('./engagement');
 const { useMongoDBAuthState, closeMongo } = require('./mongo');
+const { handleAIMessage } = require('./ai');
 
 const SESSION_DIR = path.join(__dirname, '..', 'session');
 const logger = pino({ level: 'silent' });
@@ -149,6 +150,11 @@ async function connectToWhatsApp(onGroupDetected, onReady) {
             } else {
               await sendText(chatId, resultado);
             }
+          }
+        } else if (text.length > 5) {
+          const aiResponse = await handleAIMessage(chatId, text, pushName, senderId);
+          if (aiResponse) {
+            await sendText(chatId, aiResponse);
           }
         }
       }
