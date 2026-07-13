@@ -34,6 +34,8 @@ const COMANDOS = {
         '!grupos - Ver grupos registrados',
         '!anuncio <mensaje> - Enviar anuncio',
         '!evento <fecha> <desc> - Crear evento',
+        '!test - Enviar contenido de prueba',
+        '!testimage - Probar envio de imagen',
       ].join('\n');
     },
   },
@@ -277,6 +279,26 @@ const COMANDOS = {
         return { type: 'image', imageBuffer: content.imageBuffer, caption: content.formattedMessage || content.caption || '' };
       }
       return content.message;
+    },
+  },
+
+  testimage: {
+    desc: 'Probar envio de imagen',
+    ejecutar: async () => {
+      const axios = require('axios');
+      try {
+        const res = await axios.get('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png', { responseType: 'arraybuffer' });
+        return { type: 'image', imageBuffer: Buffer.from(res.data), caption: '*Prueba de imagen*\n\nSi ves esta imagen, el bot funciona correctamente!' };
+      } catch (e) {
+        return 'Error descargando imagen: ' + e.message;
+      }
+    },
+  },
+
+  testvideo: {
+    desc: 'Probar envio de video',
+    ejecutar: async () => {
+      return 'Para probar video, envia un video al grupo y el bot lo guardara. Por ahora solo puedo enviar imagenes y texto.';
     },
   },
 };
