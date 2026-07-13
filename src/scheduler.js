@@ -66,7 +66,11 @@ async function processQueue() {
   console.log(`[QUEUE] Procesando ${pendingItems.length} items de la cola...`);
 
   for (const item of pendingItems) {
-    const registeredGroups = Object.entries(config.GROUPS).filter(([id, g]) => g.registrado && g.tipo === item.tipo);
+    let registeredGroups = Object.entries(config.GROUPS).filter(([id, g]) => g.registrado && g.tipo === item.tipo);
+
+    if (item.tipo === 'prueba') {
+      registeredGroups = Object.entries(config.GROUPS).filter(([id, g]) => g.registrado);
+    }
 
     if (registeredGroups.length === 0) {
       console.log(`[QUEUE] No hay grupos tipo ${item.tipo}, saltando...`);

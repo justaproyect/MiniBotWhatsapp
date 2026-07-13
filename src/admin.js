@@ -176,7 +176,7 @@ router.post('/queue/upload-excel', upload.single('excel'), async (req, res) => {
       return res.status(400).json({ success: false, error: 'El Excel esta vacio' });
     }
 
-    const tiposValidos = ['general', 'compra', 'rifas', 'torneos', 'subastas', 'tienda', 'anuncios'];
+    const tiposValidos = ['general', 'compra', 'rifas', 'torneos', 'subastas', 'tienda', 'anuncios', 'prueba'];
     let agregados = 0;
     let errores = [];
 
@@ -339,7 +339,7 @@ function getAdminHTML(content, queueItems) {
     `;
   }).join('');
 
-  const tipoOptions = grupos.map(g => `<option value="${g.tipo}">${g.icon} ${g.nombre}</option>`).join('');
+  const tipoOptions = grupos.map(g => `<option value="${g.tipo}">${g.icon} ${g.nombre}</option>`).join('') + '<option value="prueba">🧪 Grupo de prueba</option>';
 
   return `<!DOCTYPE html>
 <html lang="es">
