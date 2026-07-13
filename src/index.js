@@ -213,10 +213,13 @@ app.post('/probar', async (req, res) => {
   }
 });
 
-const server = app.listen(config.PORT, () => {
+const server = app.listen(config.PORT, async () => {
   console.log(`\n[EXPRESS] Servidor corriendo en puerto ${config.PORT}`);
   console.log(`[EXPRESS] Abre http://localhost:${config.PORT} en tu navegador para ver el QR`);
   console.log(`[EXPRESS] Health check: http://localhost:${config.PORT}/health\n`);
+
+  await config.loadGroups();
+  console.log('[MAIN] Grupos cargados desde MongoDB');
 
   connectToWhatsApp(
     (groupId) => {
