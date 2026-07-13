@@ -9,6 +9,7 @@ const cloudinary = require('./cloudinary');
 cloudinary.configure();
 
 const app = express();
+app.use(express.json());
 
 app.get('/health', (req, res) => {
   const registeredGroups = Object.entries(config.GROUPS).filter(([id, g]) => g.registrado);

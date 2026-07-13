@@ -58,7 +58,10 @@ async function downloadMedia(url) {
 }
 
 async function processQueue() {
-  if (!isBotConnected()) return;
+  if (!isBotConnected()) {
+    console.log('[QUEUE] Bot no conectado, saltando cola...');
+    return;
+  }
 
   const pendingItems = queue.getPendingItems();
   if (pendingItems.length === 0) return;
@@ -73,11 +76,11 @@ async function processQueue() {
     }
 
     if (registeredGroups.length === 0) {
-      console.log(`[QUEUE] No hay grupos tipo ${item.tipo}, saltando...`);
-      queue.markAsSent(item.id);
+      console.log(`[QUEUE] No hay grupos tipo "${item.tipo}", saltando item ${item.id}...`);
       continue;
     }
 
+    let enviados = 0;
     for (const [groupId, group] of registeredGroups) {
       try {
         let message = item.contenido;
@@ -103,19 +106,27 @@ async function processQueue() {
           await sendMessage(groupId, { text: message });
         }
 
+        enviados++;
         console.log(`[QUEUE] ✓ Enviado a ${group.nombre}`);
       } catch (err) {
         console.error(`[QUEUE] ✗ Error enviando a ${group.nombre}:`, err.message);
       }
     }
 
-    queue.markAsSent(item.id);
+    if (enviados > 0) {
+      queue.markAsSent(item.id);
+      console.log(`[QUEUE] Item ${item.id} marcado como enviado (${enviados} grupos)`);
+    } else {
+      console.log(`[QUEUE] Item ${item.id} NO enviado a ningun grupo, se reintentara`);
+    }
   }
 
   console.log(`[QUEUE] Cola procesada`);
 }
 
 function startScheduler() {
+  stopScheduler();
+
   const minute = config.SEND_MINUTE.toString().padStart(2, '0');
   const hour = config.SEND_HOUR.toString().padStart(2, '0');
   const cronExpression = `${minute} ${hour} * * *`;
