@@ -5,6 +5,7 @@ const { getDailyTrivia } = require('./messages/trivia');
 const { getDailyQuiz } = require('./messages/quiz');
 const { getDailyMemeWithBuffer } = require('./messages/memes');
 const points = require('./points');
+const { getTodayActivity, getRandomActivity } = require('./dailyActivity');
 
 const COMANDOS = {
   ayuda: {
@@ -35,6 +36,10 @@ const COMANDOS = {
         '*Referidos:*',
         '!referir - Obtener codigo de referido',
         '!fuiinvitadopor [codigo] - Registrarte como referido',
+        '',
+        '*Actividades:*',
+        '!actividad - Reto del dia',
+        '!reto - Reto random Pokemon',
         '',
         '*Admin:*',
         '!registrar <tipo> - Registrar grupo',
@@ -594,6 +599,24 @@ const COMANDOS = {
       msg += `- Fuera de Sincelejo: Coordinar\n\n`;
       msg += `O visita nuestra tienda:\n📍 Sincelejo, Sucre\n⏰ 10AM - 8PM`;
       return msg;
+    },
+  },
+
+  actividad: {
+    desc: 'Actividad del dia',
+    ejecutar: () => {
+      const activity = getTodayActivity();
+      const result = activity.generate();
+      return result.message;
+    },
+  },
+
+  reto: {
+    desc: 'Reto random Pokemon',
+    ejecutar: () => {
+      const activity = getRandomActivity();
+      const result = activity.generate();
+      return result.message;
     },
   },
 };
