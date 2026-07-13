@@ -43,8 +43,13 @@ async function addItem(item) {
     creada: new Date().toISOString(),
   };
 
-  if (cloudinary.isAvailable()) {
-    if (item.imageUrl) {
+  const isCloudinaryUrl = (url) => url && url.includes('cloudinary.com');
+
+  if (item.imageUrl) {
+    if (isCloudinaryUrl(item.imageUrl)) {
+      newItem.imageUrl = item.imageUrl;
+      console.log('[QUEUE] Imagen ya esta en Cloudinary, guardando URL');
+    } else if (cloudinary.isAvailable()) {
       console.log('[QUEUE] Subiendo imagen a Cloudinary...');
       const cloudUrl = await cloudinary.uploadFromUrl(item.imageUrl, `queue_${newItem.id}`);
       if (cloudUrl) {
@@ -54,8 +59,16 @@ async function addItem(item) {
         newItem.imageUrl = item.imageUrl;
         console.log('[QUEUE] Cloudinary fallo, usando URL original');
       }
+    } else {
+      newItem.imageUrl = item.imageUrl;
     }
-    if (item.videoUrl) {
+  }
+
+  if (item.videoUrl) {
+    if (isCloudinaryUrl(item.videoUrl)) {
+      newItem.videoUrl = item.videoUrl;
+      console.log('[QUEUE] Video ya esta en Cloudinary, guardando URL');
+    } else if (cloudinary.isAvailable()) {
       console.log('[QUEUE] Subiendo video a Cloudinary...');
       const cloudUrl = await cloudinary.uploadFromUrl(item.videoUrl, `queue_${newItem.id}`);
       if (cloudUrl) {
@@ -65,10 +78,9 @@ async function addItem(item) {
         newItem.videoUrl = item.videoUrl;
         console.log('[QUEUE] Cloudinary fallo, usando URL original');
       }
+    } else {
+      newItem.videoUrl = item.videoUrl;
     }
-  } else {
-    newItem.imageUrl = item.imageUrl || null;
-    newItem.videoUrl = item.videoUrl || null;
   }
 
   queue.items.push(newItem);
