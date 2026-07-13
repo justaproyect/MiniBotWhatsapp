@@ -1,4 +1,4 @@
-const { MongoClient } = require('mongodb');
+const { MongoClient, Binary } = require('mongodb');
 const { initAuthCreds, BufferJSON } = require('@whiskeysockets/baileys');
 
 const MONGO_URI = process.env.MONGO_URI || null;
@@ -15,7 +15,9 @@ async function connectMongo() {
   try {
     client = new MongoClient(MONGO_URI, {
       serverSelectionTimeoutMS: 5000,
-      connectTimeoutMS: 5000,
+      connectTimeoutMS: 10000,
+      tls: true,
+      tlsAllowInvalidCertificates: false,
     });
     await client.connect();
     db = client.db();
@@ -26,6 +28,20 @@ async function connectMongo() {
     console.log('[MONGO] Usando almacenamiento local como respaldo');
     return null;
   }
+}
+
+function replacer(key, value) {
+  if (value instanceof Buffer) {
+    return { $type: 'Buffer', data: Array.from(value) };
+  }
+  return value;
+}
+
+function reviver(key, value) {
+  if (value && typeof value === 'object' && value.$type === 'Buffer' && Array.isArray(value.data)) {
+    return Buffer.from(value.data);
+  }
+  return value;
 }
 
 async function useMongoDBAuthState() {
@@ -41,7 +57,16 @@ async function useMongoDBAuthState() {
   async function readData(collection, key) {
     try {
       const doc = await collection.findOne({ _id: key });
-      return doc ? doc.data : null;
+      if (!doc || !doc.data) return null;
+      if (typeof doc.data === 'string') {
+        return JSON.parse(doc.data, reviver);
+      }
+      if (doc.data instanceof Binary || (doc.data && doc.data._bsontype === 'Binary')) {
+        const str = doc.data.toString('utf8');
+        await collection.updateOne({ _id: key }, { $set: { data: str } });
+        return JSON.parse(str, reviver);
+      }
+      return doc.data;
     } catch (e) {
       return null;
     }
@@ -49,9 +74,10 @@ async function useMongoDBAuthState() {
 
   async function writeData(collection, key, data) {
     try {
+      const serialized = JSON.stringify(data, replacer);
       await collection.updateOne(
         { _id: key },
-        { $set: { data } },
+        { $set: { data: serialized } },
         { upsert: true }
       );
     } catch (e) {
