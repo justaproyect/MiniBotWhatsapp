@@ -4,6 +4,7 @@ const { generateDailyContentWithRanking } = require('./messages/generator');
 const { sendMessage, isBotConnected } = require('./baileys');
 const queue = require('./queue');
 const axios = require('axios');
+const { getPokemonByName, findPokemonInText } = require('./pokeapi');
 
 let scheduledTask = null;
 let queueTask = null;
@@ -88,20 +89,31 @@ async function processQueue() {
           message = `*${item.titulo}*\n\n${message}`;
         }
 
+        let imageBuffer = null;
+        let videoBuffer = null;
+
         if (item.imageUrl) {
-          const imageBuffer = await downloadMedia(item.imageUrl);
-          if (imageBuffer) {
-            await sendMessage(groupId, { image: imageBuffer, caption: message });
-          } else {
-            await sendMessage(groupId, { text: message });
+          imageBuffer = await downloadMedia(item.imageUrl);
+        } else if (item.titulo || item.contenido) {
+          const pokemonName = findPokemonInText((item.titulo || '') + ' ' + (item.contenido || ''));
+          if (pokemonName) {
+            console.log(`[QUEUE] Pokemon detectado: ${pokemonName}, buscando imagen...`);
+            const pokemon = await getPokemonByName(pokemonName);
+            if (pokemon && pokemon.imageBuffer) {
+              imageBuffer = pokemon.imageBuffer;
+              console.log(`[QUEUE] Imagen de ${pokemon.name} obtenida de PokeAPI`);
+            }
           }
-        } else if (item.videoUrl) {
-          const videoBuffer = await downloadMedia(item.videoUrl);
-          if (videoBuffer) {
-            await sendMessage(groupId, { video: videoBuffer, caption: message });
-          } else {
-            await sendMessage(groupId, { text: message });
-          }
+        }
+
+        if (item.videoUrl) {
+          videoBuffer = await downloadMedia(item.videoUrl);
+        }
+
+        if (imageBuffer) {
+          await sendMessage(groupId, { image: imageBuffer, caption: message });
+        } else if (videoBuffer) {
+          await sendMessage(groupId, { video: videoBuffer, caption: message });
         } else {
           await sendMessage(groupId, { text: message });
         }
