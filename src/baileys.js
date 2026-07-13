@@ -144,6 +144,8 @@ async function connectToWhatsApp(onGroupDetected, onReady) {
           if (resultado) {
             if (typeof resultado === 'object' && resultado.type === 'image') {
               await sendMessage(chatId, { image: resultado.imageBuffer, caption: resultado.caption });
+            } else if (typeof resultado === 'object' && resultado.type === 'video') {
+              await sendMessage(chatId, { video: resultado.videoBuffer, caption: resultado.caption });
             } else {
               await sendText(chatId, resultado);
             }

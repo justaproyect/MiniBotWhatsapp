@@ -287,8 +287,8 @@ const COMANDOS = {
     ejecutar: async () => {
       const axios = require('axios');
       try {
-        const res = await axios.get('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png', { responseType: 'arraybuffer' });
-        return { type: 'image', imageBuffer: Buffer.from(res.data), caption: '*Prueba de imagen*\n\nSi ves esta imagen, el bot funciona correctamente!' };
+        const res = await axios.get('https://i.imgur.com/aWrt2dx.jpg', { responseType: 'arraybuffer', timeout: 15000 });
+        return { type: 'image', imageBuffer: Buffer.from(res.data), caption: '*Prueba de imagen*\n\nSi ves esta imagen, el bot puede enviar imagenes desde URLs correctamente!' };
       } catch (e) {
         return 'Error descargando imagen: ' + e.message;
       }
@@ -298,7 +298,13 @@ const COMANDOS = {
   testvideo: {
     desc: 'Probar envio de video',
     ejecutar: async () => {
-      return 'Para probar video, envia un video al grupo y el bot lo guardara. Por ahora solo puedo enviar imagenes y texto.';
+      const axios = require('axios');
+      try {
+        const res = await axios.get('https://i.imgur.com/aWrt2dx.mp4', { responseType: 'arraybuffer', timeout: 30000 });
+        return { type: 'video', videoBuffer: Buffer.from(res.data), caption: '*Prueba de video*\n\nSi ves este video, el bot puede enviar videos desde URLs correctamente!' };
+      } catch (e) {
+        return 'Error descargando video: ' + e.message;
+      }
     },
   },
 };
