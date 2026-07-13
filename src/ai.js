@@ -1,12 +1,9 @@
 const config = require('./config');
 
-const AI_RESPONSE_CHANCE = 0.15;
-const MAX_RESPONSES_PER_HOUR = 5;
+const AI_RESPONSE_CHANCE = 0.05;
+const MAX_RESPONSES_PER_HOUR = 2;
 const TRIGGER_KEYWORDS = [
-  'pokemon', 'pikachu', 'charizard', 'mewtwo', 'eevee',
-  'quien es', 'que es', 'cuantos', 'cual es',
-  'ayuda', 'opinion', 'mejor', 'peor',
-  'hola bot', 'oye bot', 'bot',
+  'oye bot', 'hola bot', 'bot opinion',
 ];
 
 let responseCount = 0;

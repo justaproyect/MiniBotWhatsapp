@@ -238,7 +238,6 @@ const server = app.listen(config.PORT, async () => {
     () => {
       console.log('[MAIN] Bot listo. Iniciando programador...');
       startScheduler();
-      startTodayActivity();
     }
   );
 });
