@@ -94,9 +94,12 @@ router.post('/test/:tipo', async (req, res) => {
 
 router.post('/queue/add', async (req, res) => {
   try {
+    console.log('[ADMIN] Agregando item a la cola:', JSON.stringify(req.body).substring(0, 200));
     const item = await queue.addItem(req.body);
+    console.log('[ADMIN] Item guardado:', item.id);
     res.json({ success: true, item });
   } catch (e) {
+    console.error('[ADMIN] Error agregando item:', e.message);
     res.status(500).json({ success: false, error: e.message });
   }
 });
