@@ -5,10 +5,11 @@ const config = require('./config');
 const queue = require('./queue');
 const multer = require('multer');
 const XLSX = require('xlsx');
+const cloudinary = require('./cloudinary');
 
 const router = express.Router();
 const CONTENT_PATH = path.join(__dirname, 'data', 'custom-content.json');
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } });
 
 function loadContent() {
   try {
@@ -117,6 +118,47 @@ router.get('/queue/list', (req, res) => {
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
   }
+});
+
+router.post('/upload-media', upload.single('media'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ success: false, error: 'No se subio ningun archivo' });
+    }
+
+    if (!cloudinary.isAvailable()) {
+      return res.status(400).json({ success: false, error: 'Cloudinary no configurado. Agrega las variables de entorno.' });
+    }
+
+    const isVideo = req.file.mimetype.startsWith('video/');
+    const result = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploadStream
+        ? null
+        : null;
+
+      const cloudinaryV2 = require('cloudinary').v2;
+      const stream = cloudinaryV2.uploader.upload_stream(
+        {
+          folder: 'pokemon-bot',
+          public_id: `upload_${Date.now()}`,
+          resource_type: isVideo ? 'video' : 'image',
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+      stream.end(req.file.buffer);
+    });
+
+    res.json({ success: true, url: result.secure_url, type: isVideo ? 'video' : 'image' });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+router.get('/cloudinary-status', (req, res) => {
+  res.json({ configured: cloudinary.isAvailable() });
 });
 
 router.post('/queue/upload-excel', upload.single('excel'), async (req, res) => {
@@ -628,12 +670,22 @@ function getAdminHTML(content, queueItems) {
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>URL de imagen (opcional)</label>
-              <input type="url" id="queue-image" placeholder="https://i.imgur.com/imagen.jpg">
+              <label>Imagen (URL o archivo)</label>
+              <input type="url" id="queue-image" placeholder="https://i.imgur.com/imagen.jpg" style="margin-bottom:8px;">
+              <label class="btn btn-preview" style="cursor:pointer; display:inline-block; padding:6px 12px; font-size:0.8em;">
+                📁 Subir archivo
+                <input type="file" id="queue-image-file" accept="image/*" style="display:none;" onchange="uploadFile('image')">
+              </label>
+              <span id="queue-image-status" style="font-size:0.75em; margin-left:8px;"></span>
             </div>
             <div class="form-group">
-              <label>URL de video (opcional)</label>
-              <input type="url" id="queue-video" placeholder="https://example.com/video.mp4">
+              <label>Video (URL o archivo)</label>
+              <input type="url" id="queue-video" placeholder="https://example.com/video.mp4" style="margin-bottom:8px;">
+              <label class="btn btn-preview" style="cursor:pointer; display:inline-block; padding:6px 12px; font-size:0.8em;">
+                📁 Subir archivo
+                <input type="file" id="queue-video-file" accept="video/*" style="display:none;" onchange="uploadFile('video')">
+              </label>
+              <span id="queue-video-status" style="font-size:0.75em; margin-left:8px;"></span>
             </div>
           </div>
           <div class="form-row">
@@ -785,6 +837,37 @@ function getAdminHTML(content, queueItems) {
       } catch (e) {
         showToast('❌ Error de conexion', 'error');
       }
+    }
+
+    async function uploadFile(type) {
+      var fileInput = document.getElementById('queue-' + type + '-file');
+      var statusSpan = document.getElementById('queue-' + type + '-status');
+      var urlInput = document.getElementById('queue-' + type);
+      var file = fileInput.files[0];
+      if (!file) return;
+
+      statusSpan.innerHTML = '<span style="color:#ff9800;">⏳ Subiendo...</span>';
+
+      var formData = new FormData();
+      formData.append('media', file);
+
+      try {
+        var res = await fetch('/admin/upload-media', {
+          method: 'POST',
+          body: formData,
+        });
+        var result = await res.json();
+        if (result.success) {
+          urlInput.value = result.url;
+          statusSpan.innerHTML = '<span style="color:#4caf50;">✅ Subido!</span>';
+          showToast('✅ Archivo subido a Cloudinary', 'success');
+        } else {
+          statusSpan.innerHTML = '<span style="color:#f44336;">❌ ' + result.error + '</span>';
+        }
+      } catch (e) {
+        statusSpan.innerHTML = '<span style="color:#f44336;">❌ Error</span>';
+      }
+      fileInput.value = '';
     }
 
     async function addQueueItem() {

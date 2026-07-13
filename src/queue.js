@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
+const cloudinary = require('./cloudinary');
 
 const QUEUE_PATH = path.join(__dirname, 'data', 'content-queue.json');
 
@@ -20,7 +21,7 @@ function saveQueue(queue) {
 async function downloadMedia(url) {
   try {
     const res = await axios.get(url, { responseType: 'arraybuffer', timeout: 30000 });
-    return Buffer.from(res.data).toString('base64');
+    return Buffer.from(res.data);
   } catch (e) {
     console.error('[QUEUE] Error descargando media:', e.message);
     return null;
@@ -34,34 +35,40 @@ async function addItem(item) {
     tipo: item.tipo,
     titulo: item.titulo || '',
     contenido: item.contenido || '',
-    imageUrl: item.imageUrl || null,
-    videoUrl: item.videoUrl || null,
-    imageBase64: null,
-    videoBase64: null,
+    imageUrl: null,
+    videoUrl: null,
     fecha: item.fecha,
     hora: item.hora || '08:00',
     enviada: false,
     creada: new Date().toISOString(),
   };
 
-  if (item.imageUrl) {
-    console.log('[QUEUE] Descargando imagen:', item.imageUrl);
-    newItem.imageBase64 = await downloadMedia(item.imageUrl);
-    if (newItem.imageBase64) {
-      console.log('[QUEUE] Imagen guardada en base64');
-    } else {
-      console.log('[QUEUE] No se pudo descargar la imagen, se usara la URL');
+  if (cloudinary.isAvailable()) {
+    if (item.imageUrl) {
+      console.log('[QUEUE] Subiendo imagen a Cloudinary...');
+      const cloudUrl = await cloudinary.uploadFromUrl(item.imageUrl, `queue_${newItem.id}`);
+      if (cloudUrl) {
+        newItem.imageUrl = cloudUrl;
+        console.log('[QUEUE] Imagen guardada en Cloudinary');
+      } else {
+        newItem.imageUrl = item.imageUrl;
+        console.log('[QUEUE] Cloudinary fallo, usando URL original');
+      }
     }
-  }
-
-  if (item.videoUrl) {
-    console.log('[QUEUE] Descargando video:', item.videoUrl);
-    newItem.videoBase64 = await downloadMedia(item.videoUrl);
-    if (newItem.videoBase64) {
-      console.log('[QUEUE] Video guardado en base64');
-    } else {
-      console.log('[QUEUE] No se pudo descargar el video, se usara la URL');
+    if (item.videoUrl) {
+      console.log('[QUEUE] Subiendo video a Cloudinary...');
+      const cloudUrl = await cloudinary.uploadFromUrl(item.videoUrl, `queue_${newItem.id}`);
+      if (cloudUrl) {
+        newItem.videoUrl = cloudUrl;
+        console.log('[QUEUE] Video guardado en Cloudinary');
+      } else {
+        newItem.videoUrl = item.videoUrl;
+        console.log('[QUEUE] Cloudinary fallo, usando URL original');
+      }
     }
+  } else {
+    newItem.imageUrl = item.imageUrl || null;
+    newItem.videoUrl = item.videoUrl || null;
   }
 
   queue.items.push(newItem);

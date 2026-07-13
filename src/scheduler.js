@@ -81,13 +81,7 @@ async function processQueue() {
           message = `*${item.titulo}*\n\n${message}`;
         }
 
-        if (item.imageBase64) {
-          const imageBuffer = Buffer.from(item.imageBase64, 'base64');
-          await sendMessage(groupId, { image: imageBuffer, caption: message });
-        } else if (item.videoBase64) {
-          const videoBuffer = Buffer.from(item.videoBase64, 'base64');
-          await sendMessage(groupId, { video: videoBuffer, caption: message });
-        } else if (item.imageUrl) {
+        if (item.imageUrl) {
           const imageBuffer = await downloadMedia(item.imageUrl);
           if (imageBuffer) {
             await sendMessage(groupId, { image: imageBuffer, caption: message });

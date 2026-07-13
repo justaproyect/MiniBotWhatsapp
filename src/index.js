@@ -4,6 +4,9 @@ const { connectToWhatsApp, isBotConnected, getQR, sendText } = require('./bailey
 const { startScheduler, sendDailyMessages } = require('./scheduler');
 const engagement = require('./engagement');
 const adminRouter = require('./admin');
+const cloudinary = require('./cloudinary');
+
+cloudinary.configure();
 
 const app = express();
 
