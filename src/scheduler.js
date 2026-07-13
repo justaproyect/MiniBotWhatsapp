@@ -9,6 +9,51 @@ const { getPokemonByName, findPokemonInText } = require('./pokeapi');
 let scheduledTask = null;
 let queueTask = null;
 
+async function getPreGeneratedContent(groupType) {
+  if (!config.MONGO_URI) return null;
+  try {
+    const { MongoClient } = require('mongodb');
+    const client = new MongoClient(config.MONGO_URI);
+    await client.connect();
+    const db = client.db(config.MONGO_DB || 'pokemon_bots');
+    const today = new Date().toISOString().split('T')[0];
+    const content = await db.collection('generated_content').findOne({
+      date: today,
+      groupType: groupType,
+      status: 'generated',
+    });
+    await client.close();
+    return content;
+  } catch (e) {
+    console.log('[SCHEDULER] No se pudo leer contenido pre-generado:', e.message);
+    return null;
+  }
+}
+
+async function markContentSent(postId, groupType) {
+  if (!config.MONGO_URI) return;
+  try {
+    const { MongoClient } = require('mongodb');
+    const client = new MongoClient(config.MONGO_URI);
+    await client.connect();
+    const db = client.db(config.MONGO_DB || 'pokemon_bots');
+    await db.collection('generated_content').updateOne(
+      { postId: postId },
+      { $set: { status: 'sent', sentAt: new Date() }, $push: { sentToGroups: groupType } }
+    );
+    await client.close();
+  } catch (e) {}
+}
+
+async function downloadImage(url) {
+  try {
+    const response = await axios.get(url, { responseType: 'arraybuffer', timeout: 30000 });
+    return Buffer.from(response.data);
+  } catch (e) {
+    return null;
+  }
+}
+
 async function sendDailyMessages() {
   const registeredGroups = Object.entries(config.GROUPS).filter(([id, g]) => g.registrado);
 
@@ -27,19 +72,39 @@ async function sendDailyMessages() {
 
   for (const [groupId, group] of registeredGroups) {
     try {
-      const content = await generateDailyContentWithRanking(groupId, group.tipo);
+      const preGenerated = await getPreGeneratedContent(group.tipo);
 
-      if (content.type === 'image' && content.imageBuffer) {
-        await sendMessage(groupId, {
-          image: content.imageBuffer,
-          caption: content.formattedMessage || content.caption || '',
-        });
-      } else if (content.type === 'text') {
-        await sendMessage(groupId, { text: content.message });
+      if (preGenerated) {
+        console.log(`[SCHEDULER] Usando contenido pre-generado para ${group.tipo}`);
+        let imageBuffer = null;
+        if (preGenerated.imageUrl) {
+          imageBuffer = await downloadImage(preGenerated.imageUrl);
+        }
+
+        if (imageBuffer) {
+          await sendMessage(groupId, { image: imageBuffer, caption: preGenerated.message });
+        } else {
+          await sendMessage(groupId, { text: preGenerated.message });
+        }
+
+        await markContentSent(preGenerated.postId, group.tipo);
+        enviados++;
+        console.log(`[SCHEDULER] ✓ ${group.nombre} (${group.tipo}) [pre-generado]`);
+      } else {
+        const content = await generateDailyContentWithRanking(groupId, group.tipo);
+
+        if (content.type === 'image' && content.imageBuffer) {
+          await sendMessage(groupId, {
+            image: content.imageBuffer,
+            caption: content.formattedMessage || content.caption || '',
+          });
+        } else if (content.type === 'text') {
+          await sendMessage(groupId, { text: content.message });
+        }
+
+        enviados++;
+        console.log(`[SCHEDULER] ✓ ${group.nombre} (${group.tipo}) [local]`);
       }
-
-      enviados++;
-      console.log(`[SCHEDULER] ✓ ${group.nombre} (${group.tipo})`);
     } catch (err) {
       console.error(`[SCHEDULER] ✗ ${group.nombre}: ${err.message}`);
     }
