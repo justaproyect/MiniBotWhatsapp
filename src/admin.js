@@ -9,6 +9,7 @@ const cloudinary = require('./cloudinary');
 
 const router = express.Router();
 const CONTENT_PATH = path.join(__dirname, 'data', 'custom-content.json');
+const MEDIA_LIB_PATH = path.join(__dirname, 'data', 'media-library.json');
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } });
 
 function loadContent() {
@@ -24,10 +25,24 @@ function saveContent(content) {
   fs.writeFileSync(CONTENT_PATH, JSON.stringify(content, null, 2), 'utf8');
 }
 
+function loadMediaLibrary() {
+  try {
+    if (fs.existsSync(MEDIA_LIB_PATH)) {
+      return JSON.parse(fs.readFileSync(MEDIA_LIB_PATH, 'utf8'));
+    }
+  } catch (e) {}
+  return { items: [] };
+}
+
+function saveMediaLibrary(lib) {
+  fs.writeFileSync(MEDIA_LIB_PATH, JSON.stringify(lib, null, 2), 'utf8');
+}
+
 router.get('/', (req, res) => {
   const content = loadContent();
   const queueItems = queue.getAllItems();
-  res.send(getAdminHTML(content, queueItems));
+  const mediaLib = loadMediaLibrary();
+  res.send(getAdminHTML(content, queueItems, mediaLib));
 });
 
 router.post('/save', (req, res) => {
@@ -164,6 +179,76 @@ router.get('/cloudinary-status', (req, res) => {
   res.json({ configured: cloudinary.isAvailable() });
 });
 
+router.get('/media-library', (req, res) => {
+  try {
+    const lib = loadMediaLibrary();
+    res.json({ success: true, items: lib.items });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+router.post('/media-library/upload', upload.array('media', 20), async (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ success: false, error: 'No se subieron archivos' });
+    }
+    if (!cloudinary.isAvailable()) {
+      return res.status(400).json({ success: false, error: 'Cloudinary no configurado' });
+    }
+
+    const cloudinaryV2 = require('cloudinary').v2;
+    const lib = loadMediaLibrary();
+    const uploaded = [];
+
+    for (const file of req.files) {
+      const isVideo = file.mimetype.startsWith('video/');
+      const result = await new Promise((resolve, reject) => {
+        const stream = cloudinaryV2.uploader.upload_stream(
+          {
+            folder: 'pokemon-bot/media',
+            public_id: `lib_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+            resource_type: isVideo ? 'video' : 'image',
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        stream.end(file.buffer);
+      });
+
+      const item = {
+        id: Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
+        nombre: file.originalname,
+        url: result.secure_url,
+        tipo: isVideo ? 'video' : 'imagen',
+        tamano: (file.size / 1024).toFixed(1) + ' KB',
+        subida: new Date().toISOString(),
+      };
+      lib.items.push(item);
+      uploaded.push(item);
+    }
+
+    saveMediaLibrary(lib);
+    res.json({ success: true, items: uploaded, total: lib.items.length });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+router.post('/media-library/delete', (req, res) => {
+  try {
+    const { id } = req.body;
+    const lib = loadMediaLibrary();
+    lib.items = lib.items.filter(i => i.id !== id);
+    saveMediaLibrary(lib);
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
 router.post('/queue/upload-excel', upload.single('excel'), async (req, res) => {
   try {
     if (!req.file) {
@@ -240,17 +325,17 @@ router.post('/queue/upload-excel', upload.single('excel'), async (req, res) => {
 router.get('/queue/template', (req, res) => {
   const wb = XLSX.utils.book_new();
   const data = [
-    { tipo: 'general', titulo: 'Pokemon del dia', contenido: 'Hoy te presentamos a un Pokemon especial...', imagen: 'https://i.imgur.com/ejemplo.jpg', video: '', fecha: '2026-07-15', hora: '08:00' },
+    { tipo: 'general', titulo: 'Pokemon del dia', contenido: 'Hoy te presentamos a un Pokemon especial...', imagen: '(Pega aqui la URL de Cloudinary)', video: '', fecha: '2026-07-15', hora: '08:00' },
     { tipo: 'compra', titulo: 'Intercambio', contenido: 'Busco Pokemon tipo fuego para intercambiar...', imagen: '', video: '', fecha: '2026-07-15', hora: '08:00' },
-    { tipo: 'rifas', titulo: 'Rifa especial', contenido: 'Rifa de consola Game Boy Color...', imagen: 'https://i.imgur.com/ejemplo2.jpg', video: '', fecha: '2026-07-16', hora: '09:00' },
+    { tipo: 'rifas', titulo: 'Rifa especial', contenido: 'Rifa de consola Game Boy Color...', imagen: '(Pega aqui la URL de Cloudinary)', video: '', fecha: '2026-07-16', hora: '09:00' },
     { tipo: 'torneos', titulo: 'Raid Hour', contenido: 'Hoy es dia de raid! Organiza tu equipo...', imagen: '', video: '', fecha: '2026-07-16', hora: '16:00' },
-    { tipo: 'subastas', titulo: 'Subasta Pokemon', contenido: 'Carta rara Charizard base set...', imagen: '', video: '', fecha: '2026-07-17', hora: '10:00' },
-    { tipo: 'tienda', titulo: 'Ofertas', contenido: 'Descuentos en la tienda oficial...', imagen: 'https://i.imgur.com/ejemplo3.jpg', video: '', fecha: '2026-07-17', hora: '08:00' },
+    { tipo: 'subastas', titulo: 'Subasta Pokemon', contenido: 'Carta rara Charizard base set...', imagen: '', video: '(Pega aqui la URL de Cloudinary)', fecha: '2026-07-17', hora: '10:00' },
+    { tipo: 'tienda', titulo: 'Ofertas', contenido: 'Descuentos en la tienda oficial...', imagen: '(Pega aqui la URL de Cloudinary)', video: '', fecha: '2026-07-17', hora: '08:00' },
     { tipo: 'anuncios', titulo: 'Aviso importante', contenido: 'Mantenimiento programado del bot...', imagen: '', video: '', fecha: '2026-07-18', hora: '08:00' },
   ];
   const ws = XLSX.utils.json_to_sheet(data);
   ws['!cols'] = [
-    { wch: 12 }, { wch: 20 }, { wch: 50 }, { wch: 40 }, { wch: 40 }, { wch: 12 }, { wch: 8 },
+    { wch: 12 }, { wch: 20 }, { wch: 50 }, { wch: 45 }, { wch: 45 }, { wch: 12 }, { wch: 8 },
   ];
   XLSX.utils.book_append_sheet(wb, ws, 'Contenido');
   const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
@@ -259,7 +344,7 @@ router.get('/queue/template', (req, res) => {
   res.send(buffer);
 });
 
-function getAdminHTML(content, queueItems) {
+function getAdminHTML(content, queueItems, mediaLib) {
   const grupos = [
     { tipo: 'general', nombre: 'General', color: '#ffcb05', icon: '🟡' },
     { tipo: 'compra', nombre: 'Compra y Venta', color: '#4caf50', icon: '🟢' },
@@ -632,6 +717,44 @@ function getAdminHTML(content, queueItems) {
     }
     .toggle input:checked + .slider { background: #4caf50; }
     .toggle input:checked + .slider:before { transform: translateX(24px); }
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .media-card {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid #333;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+    .media-card:hover { border-color: #ffcb05; }
+    .media-preview {
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+    .media-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .media-info { padding: 10px; }
+    .media-name {
+      font-size: 0.8em;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 4px;
+    }
+    .media-meta { font-size: 0.7em; color: #888; margin-bottom: 8px; }
+    .media-actions { display: flex; gap: 5px; }
   </style>
 </head>
 <body>
@@ -642,6 +765,7 @@ function getAdminHTML(content, queueItems) {
     <div class="main-nav">
       <button class="main-nav-btn active" onclick="showSection('diario')">📅 Contenido Diario</button>
       <button class="main-nav-btn" onclick="showSection('cola')">📋 Cola de Contenido</button>
+      <button class="main-nav-btn" onclick="showSection('media')">📚 Biblioteca de Media</button>
     </div>
 
     <div id="section-diario" class="section active">
@@ -738,6 +862,49 @@ function getAdminHTML(content, queueItems) {
               </table>`
           }
         </div>
+      </div>
+    </div>
+
+    <div id="section-media" class="section">
+      <div class="queue-section">
+        <div class="queue-form">
+          <h3>📚 Subir imagenes y videos</h3>
+          <p style="color:#aaa; font-size:0.85em; margin-bottom:15px;">
+            Sube tus archivos aqui. Las URLs de Cloudinary se generan automaticamente. Copialas al Excel para programar contenido.
+          </p>
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <label class="btn btn-add" style="cursor:pointer;">
+              📁 Seleccionar archivos
+              <input type="file" id="media-files" accept="image/*,video/*" multiple style="display:none;" onchange="uploadMediaFiles()">
+            </label>
+            <span id="media-upload-status" style="font-size:0.85em;"></span>
+          </div>
+        </div>
+
+        <h3 style="color:#ffcb05; margin-bottom:15px;">📂 Archivos subidos (${(mediaLib.items || []).length})</h3>
+        ${(mediaLib.items || []).length === 0
+          ? '<div class="empty-state">No hay archivos subidos aun</div>'
+          : `<div class="media-grid">
+              ${(mediaLib.items || []).map(item => `
+                <div class="media-card">
+                  <div class="media-preview">
+                    ${item.tipo === 'video'
+                      ? '<div style="font-size:2em;">🎬</div>'
+                      : `<img src="${item.url}" alt="${item.nombre}" loading="lazy">`
+                    }
+                  </div>
+                  <div class="media-info">
+                    <div class="media-name" title="${item.nombre}">${item.nombre}</div>
+                    <div class="media-meta">${item.tipo} • ${item.tamano}</div>
+                    <div class="media-actions">
+                      <button class="btn btn-sm btn-preview" onclick="copyMediaUrl('${item.url}')">📋 Copiar URL</button>
+                      <button class="btn btn-sm btn-delete" onclick="deleteMediaItem('${item.id}')">🗑️</button>
+                    </div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>`
+        }
       </div>
     </div>
   </div>
@@ -954,6 +1121,70 @@ function getAdminHTML(content, queueItems) {
     }
 
     document.getElementById('queue-fecha').valueAsDate = new Date();
+
+    async function uploadMediaFiles() {
+      var fileInput = document.getElementById('media-files');
+      var status = document.getElementById('media-upload-status');
+      var files = fileInput.files;
+      if (!files.length) return;
+
+      status.innerHTML = '<span style="color:#ff9800;">⏳ Subiendo ' + files.length + ' archivo(s)...</span>';
+
+      var formData = new FormData();
+      for (var i = 0; i < files.length; i++) {
+        formData.append('media', files[i]);
+      }
+
+      try {
+        var res = await fetch('/admin/media-library/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        var result = await res.json();
+        if (result.success) {
+          status.innerHTML = '<span style="color:#4caf50;">✅ ' + result.items.length + ' archivo(s) subido(s)!</span>';
+          showToast('✅ Archivos subidos a Cloudinary', 'success');
+          setTimeout(() => location.reload(), 1500);
+        } else {
+          status.innerHTML = '<span style="color:#f44336;">❌ ' + result.error + '</span>';
+        }
+      } catch (e) {
+        status.innerHTML = '<span style="color:#f44336;">❌ Error de conexion</span>';
+      }
+      fileInput.value = '';
+    }
+
+    function copyMediaUrl(url) {
+      navigator.clipboard.writeText(url).then(function() {
+        showToast('📋 URL copiada!', 'success');
+      }).catch(function() {
+        var input = document.createElement('input');
+        input.value = url;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        showToast('📋 URL copiada!', 'success');
+      });
+    }
+
+    async function deleteMediaItem(id) {
+      if (!confirm('Eliminar este archivo de la biblioteca?')) return;
+      try {
+        var res = await fetch('/admin/media-library/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: id }),
+        });
+        var result = await res.json();
+        if (result.success) {
+          showToast('✅ Eliminado', 'success');
+          setTimeout(() => location.reload(), 1000);
+        }
+      } catch (e) {
+        showToast('❌ Error', 'error');
+      }
+    }
   </script>
 </body>
 </html>`;
