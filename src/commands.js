@@ -4,6 +4,7 @@ const { getRandomPokemonWithImage } = require('./pokeapi');
 const { getDailyTrivia } = require('./messages/trivia');
 const { getDailyQuiz } = require('./messages/quiz');
 const { getDailyMemeWithBuffer } = require('./messages/memes');
+const points = require('./points');
 
 const COMANDOS = {
   ayuda: {
@@ -16,18 +17,24 @@ const COMANDOS = {
         '!ayuda - Lista de comandos',
         '!pokemon - Pokemon random con imagen',
         '!damepoke - Pokemon random sin imagen',
-        '!ping - Verificar si el bot está activo',
+        '!ping - Verificar si el bot esta activo',
         '!horario - Calendario semanal de contenido',
         '',
-        '*Interacción:*',
+        '*Interaccion:*',
         '!trivia - Trivia interactiva',
-        '!pokebattle @usuario - Desafío Pokemon',
+        '!pokebattle @usuario - Desafio Pokemon',
         '',
-        '*Estadísticas:*',
-        '!puntos - Ver tus puntos',
-        '!top - Ranking general',
-        '!top-semana - Ranking de la semana',
-        '!logros - Ver tus logros',
+        '*Puntos y Tienda:*',
+        '!puntos - Ver tus puntos acumulados',
+        '!top - Ranking de entrenadores',
+        '!canjear - Canjear puntos por premios',
+        '!tienda - Productos y ofertas Toytsuky',
+        '!ofertas - Ofertas de la semana',
+        '!pedidos - Hacer pedido por WhatsApp',
+        '',
+        '*Referidos:*',
+        '!referir - Obtener codigo de referido',
+        '!fuiinvitadopor [codigo] - Registrarte como referido',
         '',
         '*Admin:*',
         '!registrar <tipo> - Registrar grupo',
@@ -392,6 +399,201 @@ const COMANDOS = {
         console.error('[PROBAR] Error llamando Orchestrator:', e.message);
         return `Error conectando con Orchestrator: ${e.message}`;
       }
+    },
+  },
+
+  puntos: {
+    desc: 'Ver tus puntos acumulados',
+    ejecutar: async (groupId, args, senderName, userId) => {
+      const userPoints = await points.getPoints(userId);
+      const referralCount = await points.getReferralCount(userId);
+
+      let msg = `*TUS PUNTOS*\n\n`;
+      msg += `Hola ${senderName}!\n`;
+      msg += `Tienes *${userPoints} puntos*\n`;
+      msg += `Referidos: ${referralCount}\n\n`;
+      msg += `*Como ganar puntos:*\n`;
+      msg += `- Escribir: 1 punto\n`;
+      msg += `- Trivia correcta: 10 pts\n`;
+      msg += `- Pokemon visto: 5 pts\n`;
+      msg += `- Pokebattle ganada: 15 pts\n`;
+      msg += `- Referir amigo: 50 pts\n`;
+      msg += `- Compra en tienda: 100 pts\n\n`;
+      msg += `Usa *!canjear* para ver premios`;
+      return msg;
+    },
+  },
+
+  top: {
+    desc: 'Ranking de puntos',
+    ejecutar: async () => {
+      const topUsers = await points.getTopUsers(10);
+      if (topUsers.length === 0) {
+        return 'Aun no hay usuarios con puntos.';
+      }
+
+      let msg = `*TOP ENTRENADORES*\n\n`;
+      const medals = ['🥇', '🥈', '🥉'];
+      topUsers.forEach((user, i) => {
+        const medal = medals[i] || `${i + 1}.`;
+        msg += `${medal} ${user.userName} - ${user.points} pts\n`;
+      });
+      return msg;
+    },
+  },
+
+  canjear: {
+    desc: 'Canjear puntos por premios',
+    ejecutar: async (groupId, args, senderName, userId) => {
+      const userPoints = await points.getPoints(userId);
+      const rewards = points.getRewards();
+
+      if (args.length > 0) {
+        const rewardIndex = parseInt(args[0]) - 1;
+        if (rewardIndex < 0 || rewardIndex >= rewards.length) {
+          return 'Numero de premio invalido.';
+        }
+
+        const reward = rewards[rewardIndex];
+        if (userPoints < reward.points) {
+          return `No tienes suficientes puntos. Necesitas ${reward.points} puntos, tienes ${userPoints}.`;
+        }
+
+        const success = await points.removePoints(userId, reward.points);
+        if (!success) {
+          return 'Error al canjear puntos.';
+        }
+
+        return `*CANJE EXITOSO*\n\nPremio: ${reward.name}\nDescripción: ${reward.description}\nPuntos gastados: ${reward.points}\nPuntos restantes: ${userPoints - reward.points}\n\nPresenta este mensaje en la tienda para reclamar tu premio.`;
+      }
+
+      let msg = `*PREMIOS DISPONIBLES*\n\nTus puntos: *${userPoints}*\n\n`;
+      rewards.forEach((reward, i) => {
+        const status = userPoints >= reward.points ? '✅' : '❌';
+        msg += `${i + 1}. ${status} ${reward.name} - ${reward.points} pts\n`;
+        msg += `   ${reward.description}\n\n`;
+      });
+      msg += `Para canjear: *!canjear [numero]*`;
+      return msg;
+    },
+  },
+
+  tienda: {
+    desc: 'Ver productos y ofertas de Toytsuky',
+    ejecutar: () => {
+      let msg = `*TOYTSUKY - TIENDA POKEMON*\n`;
+      msg += `📍 Sincelejo, Sucre\n\n`;
+      msg += `*Productos disponibles:*\n`;
+      msg += `- Figuras Pokemon\n`;
+      msg += `- Cartas Pokemon (sobres, cajas, singles)\n`;
+      msg += `- Accesorios (funda, estuche, album)\n`;
+      msg += `- Ropa Pokemon\n`;
+      msg += `- Juguetes y coleccionables\n\n`;
+      msg += `*Ofertas especiales:*\n`;
+      msg += `- 2x1 en sobres de cartas (miercoles)\n`;
+      msg += `- 15% OFF en figuras (viernes)\n`;
+      msg += `- Envio gratis en compras +$50.000\n\n`;
+      msg += `*Horario:*\n`;
+      msg += `Lunes a Sabado: 10:00 AM - 8:00 PM\n`;
+      msg += `Domingo: Cerrado\n\n`;
+      msg += `Usa *!canjear* para canjear tus puntos\n`;
+      msg += `Visitanos o escribe *!pedidos* para pedir por WhatsApp`;
+      return msg;
+    },
+  },
+
+  referir: {
+    desc: 'Invitar amigos y ganar puntos',
+    ejecutar: async (groupId, args, senderName, userId) => {
+      const referralCode = userId.replace(/[^0-9]/g, '').slice(-6);
+
+      let msg = `*PROGRAMA DE REFERIDOS*\n\n`;
+      msg += `Hola ${senderName}!\n\n`;
+      msg += `Tu codigo de referido es:\n`;
+      msg += `*${referralCode}*\n\n`;
+      msg += `*Como funciona:*\n`;
+      msg += `1. Comparte tu codigo con amigos\n`;
+      msg += `2. El amigo escribe *!fuiinvitadopor ${referralCode}*\n`;
+      msg += `3. Tu ganas *50 puntos* y el amigo *25 puntos*\n\n`;
+      msg += `*Beneficios por referir:*\n`;
+      msg += `- 3 amigos: 100 pts extra + sticker\n`;
+      msg += `- 5 amigos: 250 pts extra + 5% descuento\n`;
+      msg += `- 10 amigos: 500 pts extra + envio gratis\n\n`;
+      msg += `Comparte tu codigo y gana premios!`;
+      return msg;
+    },
+  },
+
+  fuiinvitadopor: {
+    desc: 'Registrarse como referido',
+    ejecutar: async (groupId, args, senderName, userId) => {
+      if (args.length === 0) {
+        return 'Usa: *!fuiinvitadopor [codigo]*\nEjemplo: !fuiinvitadopor 123456';
+      }
+
+      const referrerCode = args[0];
+      const referrerId = '120363' + referrerCode + '@g.us';
+
+      const result = await points.useReferral(referrerId, userId, senderName);
+
+      if (result?.error) {
+        return result.error;
+      }
+
+      if (result?.success) {
+        return `*BIENVENIDO A LA COMUNIDAD!*\n\nFuiste referido por ${result.referrerName}\nGanaste *${points.POINTS_PER_ACTION.referido_nuevo} puntos* de bienvenida!\n\nUsa *!puntos* para ver tu saldo`;
+      }
+
+      return 'Error al procesar el referido. Intenta de nuevo.';
+    },
+  },
+
+  ofertas: {
+    desc: 'Ver ofertas de la semana',
+    ejecutar: () => {
+      const today = new Date().getDay();
+
+      let msg = `*OFERTAS DE LA SEMANA*\n\n`;
+
+      if (today === 3) {
+        msg += `*HOY ES MIERCOLES DE OFERTAS!*\n`;
+        msg += `2x1 en sobres de cartas\n`;
+        msg += `Solo por hoy! Visitanos\n\n`;
+      } else if (today === 5) {
+        msg += `*HOY ES VIERNES DE DESCUENTOS!*\n`;
+        msg += `15% OFF en todas las figuras\n`;
+        msg += `Solo por hoy! Visitanos\n\n`;
+      }
+
+      msg += `*Ofertas fijas:*\n`;
+      msg += `- Sobre basico: $3.000\n`;
+      msg += `- Sobre elite: $8.000\n`;
+      msg += `- Figura basica: $15.000\n`;
+      msg += `- Figura especial: $35.000\n`;
+      msg += `- Caja completa: $120.000\n\n`;
+      msg += `*Promocion referidos:*\n`;
+      msg += `Invita amigos y gana puntos extra\nUsa *!referir* para tu codigo`;
+      return msg;
+    },
+  },
+
+  pedidos: {
+    desc: 'Hacer pedido por WhatsApp',
+    ejecutar: () => {
+      let msg = `*HACER PEDIDO*\n\n`;
+      msg += `Para hacer tu pedido:\n\n`;
+      msg += `1. Escribe el producto que quieres\n`;
+      msg += `2. Indica cantidad\n`;
+      msg += `3. Envia tu direccion de envio\n\n`;
+      msg += `*Opciones de pago:*\n`;
+      msg += `- Efectivo (en tienda)\n`;
+      msg += `- Nequi\n`;
+      msg += `- Daviplata\n\n`;
+      msg += `*Envios:*\n`;
+      msg += `- Sincelejo: Gratis compras +$50.000\n`;
+      msg += `- Fuera de Sincelejo: Coordinar\n\n`;
+      msg += `O visita nuestra tienda:\n📍 Sincelejo, Sucre\n⏰ 10AM - 8PM`;
+      return msg;
     },
   },
 };
