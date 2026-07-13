@@ -399,6 +399,22 @@ const COMANDOS = {
 async function ejecutarComando(comando, groupId, args = [], senderName = '', userId = '') {
   const cmd = COMANDOS[comando];
   if (!cmd) return null;
+
+  if (cmd.esAdmin) {
+    const config = require('./config');
+    const adminNumber = config.ADMIN_NUMBER;
+    if (!adminNumber) {
+      console.log('[CMDS] ADMIN_NUMBER no configurado, bloqueando comando admin');
+      return 'Este comando es solo para administradores.';
+    }
+    const cleanUserId = userId.replace(/[^0-9]/g, '');
+    const cleanAdmin = adminNumber.replace(/[^0-9]/g, '');
+    if (cleanUserId !== cleanAdmin) {
+      console.log(`[CMDS] Usuario ${cleanUserId} no es admin (${cleanAdmin})`);
+      return 'Este comando es solo para administradores.';
+    }
+  }
+
   try {
     return await cmd.ejecutar(groupId, args, senderName, userId);
   } catch (e) {
