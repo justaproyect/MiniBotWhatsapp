@@ -1,6 +1,6 @@
 const express = require('express');
 const config = require('./config');
-const { connectToWhatsApp, isBotConnected, getQR, sendText } = require('./baileys');
+const { connectToWhatsApp, isBotConnected, getQR, sendMessage, sendText } = require('./baileys');
 const { startScheduler, sendDailyMessages } = require('./scheduler');
 const engagement = require('./engagement');
 const adminRouter = require('./admin');
@@ -173,6 +173,42 @@ app.get('/send-now', async (req, res) => {
     await sendDailyMessages();
     res.json({ success: true, message: 'Mensajes enviados a todos los grupos' });
   } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/probar', async (req, res) => {
+  try {
+    const { message, imageUrl, groupId } = req.body;
+
+    if (!groupId) {
+      return res.status(400).json({ success: false, error: 'Falta groupId del grupo de prueba' });
+    }
+
+    const registeredGroups = config.GROUPS;
+    const groupEntry = Object.values(registeredGroups).find(g => g.id === groupId);
+    if (!groupEntry) {
+      return res.status(400).json({ success: false, error: 'Grupo no registrado en MiniBot' });
+    }
+
+    if (imageUrl) {
+      const axios = require('axios');
+      try {
+        const imgRes = await axios.get(imageUrl, { responseType: 'arraybuffer', timeout: 30000 });
+        const imgBuffer = Buffer.from(imgRes.data);
+        await sendMessage(groupId, { image: imgBuffer, caption: message || '' });
+      } catch (imgErr) {
+        console.error('[PROBAR] Error descargando imagen:', imgErr.message);
+        await sendText(groupId, message || '(Error al cargar imagen)');
+      }
+    } else {
+      await sendText(groupId, message || '(Sin mensaje)');
+    }
+
+    console.log(`[PROBAR] Post de prueba enviado a grupo ${groupId}`);
+    res.json({ success: true, message: 'Post enviado al grupo de prueba' });
+  } catch (err) {
+    console.error('[PROBAR] Error:', err.message);
     res.status(500).json({ success: false, error: err.message });
   }
 });

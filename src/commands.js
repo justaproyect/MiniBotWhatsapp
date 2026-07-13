@@ -36,6 +36,7 @@ const COMANDOS = {
         '!evento <fecha> <desc> - Crear evento',
         '!test - Enviar contenido de prueba',
         '!testimage - Probar envio de imagen',
+        '!probar - Probar post con imagen random',
       ].join('\n');
     },
   },
@@ -341,6 +342,52 @@ const COMANDOS = {
           return { type: 'video', videoBuffer: fs.readFileSync(cacheFile), caption: '*Prueba de video (cache)*' };
         }
         return 'Error: No se pudo descargar video: ' + e.message;
+      }
+    },
+  },
+
+  probar: {
+    desc: 'Probar envio de post con imagen',
+    ejecutar: async (groupId) => {
+      const axios = require('axios');
+      const pokemonNames = ['Pikachu', 'Charizard', 'Bulbasaur', 'Squirtle', 'Eevee', 'Mewtwo', 'Gengar', 'Dragonite', 'Machamp', 'Alakazam'];
+      const randomPoke = pokemonNames[Math.floor(Math.random() * pokemonNames.length)];
+
+      const types = ['pokemon-dia', 'trivia', 'ofertas', 'intercambios', 'subasta', 'rifas', 'anuncio', 'meme', 'quiz', 'dato-curioso'];
+      const randomType = types[Math.floor(Math.random() * types.length)];
+
+      const messages = {
+        'pokemon-dia': `Pokemon del dia: *${randomPoke}*\n\n*${randomPoke}* es uno de los Pokemon mas iconicos de la region Kanto. Su energia electrica es legendaria!\n\n#PokemonDelDia #${randomPoke}`,
+        'trivia': `*TRIVIA POKEMON*\n\nQue tipo es ${randomPoke}?\n\nA) Fuego\nB) Electrico\nC) Agua\nD) Planta\n\nResponde con !trivia [a/b/c/d]`,
+        'ofertas': `*OFERTA DEL DIA*\n\n*${randomPoke}* a precio especial!\n\nNo dejes pasar esta oportunidad de conseguir tu ${randomPoke} favorito.\n\n#OfertasPokemon`,
+        'intercambios': `*INTERCAMBIOS*\n\nTengo *${randomPoke}* para intercambiar!\n\nBusco: Pokemon equivalentes\nOfrezco: ${randomPoke} nivel 50\n\n#IntercambiosPokemon`,
+        'subasta': `*SUBASTA*\n\n*${randomPoke}* en subasta!\n\nPuja inicial: 500 monedas\nTiempo: 24 horas\n\n#SubastaPokemon`,
+        'rifas': `*RIFA*\n\nParticipa por un *${randomPoke}* exclusivo!\n\nCosto: 100 monedas\nResultado: Manana a las 8 PM\n\n#RifaPokemon`,
+        'anuncio': `*ANUNCIO*\n\n${randomPoke} llega a nuestra comunidad!\n\nNo olviden participar en las actividades de la semana.\n\n#AnuncioPokemon`,
+        'meme': `*MEME POKEMON*\n\nCuando tu ${randomPoke} evoluciona pero sigues siendo el mismo...\n\n#MemePokemon`,
+        'quiz': `*QUIZ POKEMON*\n\nCuantos movimientos puede aprender ${randomPoke}?\n\nA) 4\nB) 6\nC) 8\nD) 10\n\nResponde con !quiz [a/b/c/d]`,
+        'dato-curioso': `*DATO CURIOSO*\n\nSabias que ${randomPoke} fue descubierto en 1996?\n\nEs uno de los primeros Pokemon creados por Satoshi Tajiri.\n\n#DatoCurioso #Pokemon`,
+      };
+
+      const message = messages[randomType];
+
+      const imagePrompt = `Pokemon ${randomPoke} official artwork, colorful, detailed, white background, high quality illustration, anime style`;
+      const encodedPrompt = encodeURIComponent(imagePrompt);
+      const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=800&height=600&seed=${Math.floor(Math.random() * 1000000)}&nologo=true`;
+
+      try {
+        console.log(`[PROBAR] Generando post ${randomType} con imagen de ${randomPoke}...`);
+        const imgRes = await axios.get(imageUrl, { responseType: 'arraybuffer', timeout: 60000 });
+        const imgBuffer = Buffer.from(imgRes.data);
+
+        if (imgBuffer.length < 1000) {
+          return '*Post generado pero la imagen fallo.*\n\n' + message;
+        }
+
+        return { type: 'image', imageBuffer: imgBuffer, caption: message };
+      } catch (e) {
+        console.error('[PROBAR] Error generando imagen:', e.message);
+        return '*Post generado (sin imagen por error):*\n\n' + message;
       }
     },
   },
