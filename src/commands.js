@@ -286,11 +286,30 @@ const COMANDOS = {
     desc: 'Probar envio de imagen',
     ejecutar: async () => {
       const axios = require('axios');
+      const fs = require('fs');
+      const path = require('path');
+      const cacheDir = path.join(__dirname, '..', 'cache');
+      const cacheFile = path.join(cacheDir, 'test-image.jpg');
       try {
+        if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
+        if (fs.existsSync(cacheFile)) {
+          const data = fs.readFileSync(cacheFile);
+          return { type: 'image', imageBuffer: data, caption: '*Prueba de imagen (cache)*\n\nSi ves esta imagen, el bot puede enviar imagenes!' };
+        }
         const res = await axios.get('https://i.imgur.com/aWrt2dx.jpg', { responseType: 'arraybuffer', timeout: 15000 });
-        return { type: 'image', imageBuffer: Buffer.from(res.data), caption: '*Prueba de imagen*\n\nSi ves esta imagen, el bot puede enviar imagenes desde URLs correctamente!' };
+        fs.writeFileSync(cacheFile, Buffer.from(res.data));
+        return { type: 'image', imageBuffer: Buffer.from(res.data), caption: '*Prueba de imagen*\n\nSi ves esta imagen, el bot puede enviar imagenes desde URLs!' };
       } catch (e) {
-        return 'Error descargando imagen: ' + e.message;
+        if (fs.existsSync(cacheFile)) {
+          const data = fs.readFileSync(cacheFile);
+          return { type: 'image', imageBuffer: data, caption: '*Prueba de imagen (cache)*' };
+        }
+        try {
+          const res = await axios.get('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png', { responseType: 'arraybuffer', timeout: 15000 });
+          return { type: 'image', imageBuffer: Buffer.from(res.data), caption: '*Prueba de imagen (fallback)*\n\nPikachu dice hola!' };
+        } catch (e2) {
+          return 'Error: No se pudo descargar ninguna imagen';
+        }
       }
     },
   },
@@ -299,11 +318,25 @@ const COMANDOS = {
     desc: 'Probar envio de video',
     ejecutar: async () => {
       const axios = require('axios');
+      const fs = require('fs');
+      const path = require('path');
+      const cacheDir = path.join(__dirname, '..', 'cache');
+      const cacheFile = path.join(cacheDir, 'test-video.mp4');
       try {
-        const res = await axios.get('https://i.imgur.com/aWrt2dx.mp4', { responseType: 'arraybuffer', timeout: 30000 });
-        return { type: 'video', videoBuffer: Buffer.from(res.data), caption: '*Prueba de video*\n\nSi ves este video, el bot puede enviar videos desde URLs correctamente!' };
+        if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
+        if (fs.existsSync(cacheFile)) {
+          const data = fs.readFileSync(cacheFile);
+          return { type: 'video', videoBuffer: data, caption: '*Prueba de video (cache)*' };
+        }
+        const res = await axios.get('https://i.imgur.com/aWrt2dx.mp4', { responseType: 'arraybuffer', timeout: 60000 });
+        fs.writeFileSync(cacheFile, Buffer.from(res.data));
+        return { type: 'video', videoBuffer: Buffer.from(res.data), caption: '*Prueba de video*\n\nSi ves este video, el bot puede enviar videos!' };
       } catch (e) {
-        return 'Error descargando video: ' + e.message;
+        if (fs.existsSync(cacheFile)) {
+          const data = fs.readFileSync(cacheFile);
+          return { type: 'video', videoBuffer: data, caption: '*Prueba de video (cache)*' };
+        }
+        return 'Error: No se pudo descargar el video (' + e.message + ')';
       }
     },
   },
