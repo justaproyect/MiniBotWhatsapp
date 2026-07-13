@@ -3,6 +3,7 @@ const config = require('./config');
 const { connectToWhatsApp, isBotConnected, getQR, sendText } = require('./baileys');
 const { startScheduler, sendDailyMessages } = require('./scheduler');
 const engagement = require('./engagement');
+const adminRouter = require('./admin');
 
 const app = express();
 
@@ -16,6 +17,8 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+app.use('/admin', adminRouter);
 
 app.get('/qr', (req, res) => {
   const qr = getQR();

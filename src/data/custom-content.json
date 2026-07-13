@@ -1,0 +1,37 @@
+{
+  "general": {
+    "enabled": false,
+    "titulo": "Pokemon del Dia",
+    "contenido": "🎮 *POKEMON DEL DÍA*\n\nNombre: {pokemon}\nTipo: {tipo}\n\n{descripcion}\n\n---\nEnvía *!pokemon* para ver otro Pokemon"
+  },
+  "compra": {
+    "enabled": false,
+    "titulo": "Intercambios",
+    "contenido": "🔄 *INTERCAMBIOS DEL DÍA*\n\n{pokemon} → {evolucion}\n\n{descripcion}\n\n---\nEnvía *!damepoke* para ver qué Pokemon puedes ofrecer."
+  },
+  "rifas": {
+    "enabled": false,
+    "titulo": "Rifas",
+    "contenido": "🎯 *RIFA DEL DÍA*\n\nPremio: {premio}\nPrecio boleto: {precio}\n\n{descripcion}\n\n---\n¡Participa y gana!"
+  },
+  "torneos": {
+    "enabled": false,
+    "titulo": "Torneos y Raids",
+    "contenido": "⚔️ *RAID DEL DÍA*\n\nPokemon: {pokemon}\nDificultad: {dificultad}\n\n{descripcion}\n\n---\n¡Organiza tu equipo!"
+  },
+  "subastas": {
+    "enabled": false,
+    "titulo": "Subastas",
+    "contenido": "🏷️ *SUBASTA DEL DÍA*\n\nProducto: {producto}\nPrecio inicial: {precio}\n\n{descripcion}\n\n---\n¡Haz tu puja!"
+  },
+  "tienda": {
+    "enabled": false,
+    "titulo": "Tienda Oficial",
+    "contenido": "🛒 *TIENDA OFICIAL*\n\nProducto: {producto}\nPrecio: {precio}\n\n{descripcion}\n\n---\n¡Visita la tienda!"
+  },
+  "anuncios": {
+    "enabled": false,
+    "titulo": "Anuncios",
+    "contenido": "📢 *ANUNCIO*\n\n{mensaje}\n\n---\nMantente informado!"
+  }
+}
