@@ -50,9 +50,6 @@ const COMANDOS = {
         '!grupos - Ver grupos registrados',
         '!anuncio <mensaje> - Enviar anuncio',
         '!evento <fecha> <desc> - Crear evento',
-        '!test - Enviar contenido de prueba',
-        '!testimage - Probar envio de imagen',
-        '!probar - Probar post con imagen random',
       ].join('\n');
     },
   },
@@ -137,7 +134,7 @@ const COMANDOS = {
     necesitaArgs: true,
     ejecutar: (groupId, args, senderName) => {
       const mensaje = args.join(' ');
-      return `📢 *ANUNCIO OFICIAL*\n\n${mensaje}\n\n_Enviado por: ${senderName || 'Admin'}_`;
+      return `*ANUNCIO OFICIAL*\n\n${mensaje}\n\n_Enviado por: ${senderName || 'Admin'}_`;
     },
   },
 
@@ -147,14 +144,14 @@ const COMANDOS = {
     necesitaArgs: true,
     ejecutar: (groupId, args) => {
       const fecha = args[0] || 'Por definir';
-      const desc = args.slice(1).join(' ') || 'Sin descripción';
+      const desc = args.slice(1).join(' ') || 'Sin descripcion';
       return [
         '*Nuevo Evento Pokemon*',
         '',
-        `📅 Fecha: *${fecha}*`,
-        `📝 Descripción: ${desc}`,
+        `Fecha: *${fecha}*`,
+        `Descripcion: ${desc}`,
         '',
-        '¡Participa y gana premios!',
+        'Participa y gana premios!',
       ].join('\n');
     },
   },
@@ -282,132 +279,6 @@ const COMANDOS = {
     desc: 'Ver logros',
     ejecutar: (groupId, userId) => {
       return engagement.getLogrosUsuario(groupId, userId);
-    },
-  },
-
-  test: {
-    desc: 'Enviar contenido de prueba',
-    ejecutar: async (groupId) => {
-      const { generateDailyContentWithRanking } = require('./messages/generator');
-      const grupo = config.GROUPS[groupId];
-      if (!grupo || !grupo.registrado) return 'Primero registra el grupo con !registrar prueba';
-      const content = await generateDailyContentWithRanking(groupId, grupo.tipo);
-      if (content.type === 'image' && content.imageBuffer) {
-        return { type: 'image', imageBuffer: content.imageBuffer, caption: content.formattedMessage || content.caption || '' };
-      }
-      return content.message;
-    },
-  },
-
-  testimage: {
-    desc: 'Probar envio de imagen',
-    ejecutar: async () => {
-      const axios = require('axios');
-      const fs = require('fs');
-      const path = require('path');
-      const cacheDir = path.join(__dirname, '..', 'cache');
-      const cacheFile = path.join(cacheDir, 'test-image.png');
-      try {
-        if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
-        if (fs.existsSync(cacheFile)) {
-          const data = fs.readFileSync(cacheFile);
-          return { type: 'image', imageBuffer: data, caption: '*Prueba de imagen (cache)*\n\nSi ves esta imagen, el bot puede enviar imagenes!' };
-        }
-        const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png';
-        const res = await axios.get(url, { responseType: 'arraybuffer', timeout: 30000 });
-        const buf = Buffer.from(res.data);
-        fs.writeFileSync(cacheFile, buf);
-        return { type: 'image', imageBuffer: buf, caption: '*Prueba de imagen*\n\nSi ves esta imagen, el bot puede enviar imagenes!' };
-      } catch (e) {
-        if (fs.existsSync(cacheFile)) {
-          return { type: 'image', imageBuffer: fs.readFileSync(cacheFile), caption: '*Prueba de imagen (cache)*' };
-        }
-        return 'Error: No se pudo descargar imagen: ' + e.message;
-      }
-    },
-  },
-
-  testvideo: {
-    desc: 'Probar envio de video',
-    ejecutar: async () => {
-      const axios = require('axios');
-      const fs = require('fs');
-      const path = require('path');
-      const queue = require('./queue');
-      const cloudinary = require('./cloudinary');
-      const cacheDir = path.join(__dirname, '..', 'cache');
-      const cacheFile = path.join(cacheDir, 'test-video.mp4');
-      try {
-        if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
-        if (fs.existsSync(cacheFile)) {
-          const data = fs.readFileSync(cacheFile);
-          return { type: 'video', videoBuffer: data, caption: '*Prueba de video (cache)*\n\nSi ves este video, el bot puede enviar videos!' };
-        }
-        const items = queue.getAllItems();
-        const videoItem = items.find(i => i.videoUrl && !i.enviada);
-        if (videoItem) {
-          console.log('[TESTVIDEO] Descargando desde cola:', videoItem.videoUrl);
-          const res = await axios.get(videoItem.videoUrl, { responseType: 'arraybuffer', timeout: 60000 });
-          const buf = Buffer.from(res.data);
-          fs.writeFileSync(cacheFile, buf);
-          return { type: 'video', videoBuffer: buf, caption: '*Prueba de video*\n\nSi ves este video, el bot puede enviar videos!' };
-        }
-        return '*No hay videos disponibles para probar.*\n\nSube un video desde el admin (/admin), agrégalo a la cola, y vuelve a intentar con *!testvideo*';
-      } catch (e) {
-        if (fs.existsSync(cacheFile)) {
-          return { type: 'video', videoBuffer: fs.readFileSync(cacheFile), caption: '*Prueba de video (cache)*' };
-        }
-        return 'Error: No se pudo descargar video: ' + e.message;
-      }
-    },
-  },
-
-  probar: {
-    desc: 'Probar envio de post con imagen desde Orchestrator',
-    ejecutar: async (groupId) => {
-      const axios = require('axios');
-      const config = require('./config');
-
-      if (!config.ORCHESTRATOR_URL) {
-        return 'Error: ORCHESTRATOR_URL no configurada';
-      }
-
-      try {
-        console.log(`[PROBAR] LLamando Orchestrator: ${config.ORCHESTRATOR_URL}/api/probar`);
-        const response = await axios.post(`${config.ORCHESTRATOR_URL}/api/probar`, {
-          groupId: groupId,
-        }, { timeout: 120000 });
-
-        if (!response.data.success) {
-          return `Error del Orchestrator: ${response.data.error}`;
-        }
-
-        const { message, imageUrl, contentType } = response.data;
-
-        console.log(`[PROBAR] Post recibido: ${contentType}`);
-
-        if (imageUrl) {
-          try {
-            console.log(`[PROBAR] Descargando imagen de Cloudinary: ${imageUrl.substring(0, 60)}...`);
-            const imgRes = await axios.get(imageUrl, { responseType: 'arraybuffer', timeout: 30000 });
-            const imgBuffer = Buffer.from(imgRes.data);
-
-            if (imgBuffer.length < 1000) {
-              return '*Post generado pero la imagen fallo.*\n\n' + message;
-            }
-
-            return { type: 'image', imageBuffer: imgBuffer, caption: message };
-          } catch (imgErr) {
-            console.error('[PROBAR] Error descargando imagen:', imgErr.message);
-            return '*Post generado (error descargando imagen):*\n\n' + message;
-          }
-        }
-
-        return message || '*Post generado sin contenido*';
-      } catch (e) {
-        console.error('[PROBAR] Error llamando Orchestrator:', e.message);
-        return `Error conectando con Orchestrator: ${e.message}`;
-      }
     },
   },
 
