@@ -86,7 +86,7 @@ const COMANDOS = {
 
   ping: {
     desc: 'Verificar bot activo',
-    ejecutar: () => 'Pokemon Bot activo! Ash Ketchum está en línea.',
+    ejecutar: () => 'Pikachu!',
   },
 
   registrar: {
