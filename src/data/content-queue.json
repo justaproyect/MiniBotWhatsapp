@@ -1,16 +1,3 @@
 {
-  "items": [
-    {
-      "id": "mrjao27m3mdcw",
-      "tipo": "general",
-      "titulo": "Test",
-      "contenido": "Hola",
-      "imageUrl": "https://test.com/img.jpg",
-      "videoUrl": null,
-      "fecha": "2026-07-13",
-      "hora": "10:00",
-      "enviada": false,
-      "creada": "2026-07-13T14:05:09.298Z"
-    }
-  ]
+  "items": []
 }
