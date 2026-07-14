@@ -1,9 +1,9 @@
 const config = require('./config');
 
-const AI_RESPONSE_CHANCE = 0.05;
-const MAX_RESPONSES_PER_HOUR = 2;
+const AI_RESPONSE_CHANCE = 0;
+const MAX_RESPONSES_PER_HOUR = 0;
 const TRIGGER_KEYWORDS = [
-  'oye bot', 'hola bot', 'bot opinion',
+  'oye bot', 'bot opinion',
 ];
 
 let responseCount = 0;
