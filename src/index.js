@@ -338,9 +338,7 @@ const server = app.listen(config.PORT, async () => {
       console.log(`[MAIN] Grupo detectado: ${groupId}`);
     },
     () => {
-      console.log('[MAIN] Bot listo. Iniciando programador...');
-      startScheduler();
-      startProductScheduler(7, 0);
+      console.log('[MAIN] Bot listo. Scheduler deshabilitado manualmente.');
     }
   );
 });
