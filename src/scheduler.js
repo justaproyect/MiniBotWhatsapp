@@ -8,6 +8,8 @@ const { getPokemonByName, findPokemonInText } = require('./pokeapi');
 
 let scheduledTask = null;
 let queueTask = null;
+let queueSkipCount = 0;
+const QUEUE_SKIP_ON_START = 3;
 
 async function getPreGeneratedContent(groupType) {
   if (!config.ORCHESTRATOR_URL) return null;
@@ -121,6 +123,12 @@ async function downloadMedia(url) {
 }
 
 async function processQueue() {
+  if (queueSkipCount < QUEUE_SKIP_ON_START) {
+    queueSkipCount++;
+    console.log(`[QUEUE] Saltando ciclo ${queueSkipCount}/${QUEUE_SKIP_ON_START} tras inicio`);
+    return;
+  }
+
   if (!isBotConnected()) {
     console.log('[QUEUE] Bot no conectado, saltando cola...');
     return;
@@ -206,16 +214,18 @@ function startScheduler() {
   const cronExpression = `${minute} ${hour} * * *`;
 
   console.log(`[SCHEDULER] Horario configurado: ${cronExpression} (${config.TIMEZONE})`);
-  console.log(`[SCHEDULER] Próximo envío: ${hour}:${minute} diariamente`);
+  console.log(`[SCHEDULER] Proximo envio: ${hour}:${minute} diariamente`);
 
   scheduledTask = cron.schedule(cronExpression, () => {
-    console.log(`[SCHEDULER] Ejecutando envío programado...`);
+    console.log(`[SCHEDULER] Ejecutando envio programado...`);
     sendDailyMessages();
   }, { timezone: config.TIMEZONE });
 
   queueTask = cron.schedule('* * * * *', () => {
     processQueue();
   }, { timezone: config.TIMEZONE });
+
+  queueSkipCount = 0;
 
   return scheduledTask;
 }
