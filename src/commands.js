@@ -7,6 +7,9 @@ const { getDailyMemeWithBuffer } = require('./messages/memes');
 const points = require('./points');
 const { getTodayActivity, getRandomActivity } = require('./dailyActivity');
 const ai = require('./ai');
+const community = require('./community');
+const raffle = require('./raffle');
+const battles = require('./battles');
 
 const COMANDOS = {
   ayuda: {
@@ -24,10 +27,29 @@ const COMANDOS = {
         '',
         '*Interaccion:*',
         '!trivia - Trivia interactiva',
+        '!quiz - Quiz interactivo',
         '!pokebattle @usuario - Desafio Pokemon',
         '',
+        '*Retos y Actividades:*',
+        '!retodia - Reto del dia',
+        '!reto - Reto random',
+        '!especial - Actividad especial del dia',
+        '',
+        '*Batallas:*',
+        '!batalla @usuario - Iniciar batalla',
+        '!atacar [movimiento] - Atacar en batalla',
+        '!misbatallas - Ver batallas activas',
+        '',
+        '*Sorteos:*',
+        '!sorteo [numero] - Participar en sorteo',
+        '!premios - Ver premios disponibles',
+        '',
+        '*Comunidad:*',
+        '!comparte [pokemon] - Compartir favorito',
+        '!mifigura - Compartir tu coleccion',
+        '',
         '*Puntos y Tienda:*',
-        '!puntos - Ver tus puntos acumulados',
+        '!puntos - Ver puntos acumulados',
         '!top - Ranking de entrenadores',
         '!canjear - Canjear puntos por premios',
         '!tienda - Productos y ofertas Toytsuky',
@@ -38,18 +60,13 @@ const COMANDOS = {
         '!referir - Obtener codigo de referido',
         '!fuiinvitadopor [codigo] - Registrarte como referido',
         '',
-        '*Actividades:*',
-        '!actividad - Reto del dia',
-        '!reto - Reto random Pokemon',
-        '',
-        '*IA:*',
-        '!ia - Estado de la inteligencia artificial',
-        '',
         '*Admin:*',
         '!registrar <tipo> - Registrar grupo',
         '!grupos - Ver grupos registrados',
         '!anuncio <mensaje> - Enviar anuncio',
         '!evento <fecha> <desc> - Crear evento',
+        '!iniciar_sorteo - Iniciar sorteo semanal',
+        '!cerrar_sorteo - Cerrar sorteo y elegir ganador',
       ].join('\n');
     },
   },
@@ -508,6 +525,180 @@ const COMANDOS = {
       msg += `- Escribe una palabra clave\n`;
       msg += `- O aleatoriamente (15% de probabilidad)\n\n`;
       msg += `Maximo 5 respuestas por hora para no ser molesto`;
+      return msg;
+    },
+  },
+
+  retodia: {
+    desc: 'Reto del dia',
+    ejecutar: () => {
+      const challenge = community.getDailyChallenge();
+      const result = challenge.generate();
+      return result.message;
+    },
+  },
+
+  reto: {
+    desc: 'Reto random Pokemon',
+    ejecutar: () => {
+      const challenge = community.getRandomChallenge();
+      const result = challenge.generate();
+      return result.message;
+    },
+  },
+
+  especial: {
+    desc: 'Actividad especial del dia',
+    ejecutar: () => {
+      const special = community.getWeeklySpecial();
+      return `*${special.nombre}*\n\n${special.message}`;
+    },
+  },
+
+  sorteo: {
+    desc: 'Participar en el sorteo semanal',
+    ejecutar: (groupId, args, senderName, userId) => {
+      if (args.length === 0) {
+        return raffle.getRaffleStatus();
+      }
+
+      const number = parseInt(args[0]);
+      if (isNaN(number)) {
+        return 'Usa: *!sorteo [numero del 1 al 100]*';
+      }
+
+      const result = raffle.participateRaffle(userId, senderName, number);
+      if (result.error) return result.error;
+      return result.message;
+    },
+  },
+
+  iniciar_sorteo: {
+    desc: 'Iniciar sorteo semanal',
+    esAdmin: true,
+    ejecutar: () => {
+      const r = raffle.createRaffle();
+      let msg = `*SORTEO SEMANAL INICIADO!*\n\n`;
+      msg += `Premio: *${r.prize.name}*\n`;
+      msg += `${r.prize.description}\n\n`;
+      msg += `Para participar escribe:\n*!sorteo [numero del 1 al 100]*\n\n`;
+      msg += `El numero mas cercano al ganador se lleva el premio!`;
+      return msg;
+    },
+  },
+
+  cerrar_sorteo: {
+    desc: 'Cerrar sorteo y elegir ganador',
+    esAdmin: true,
+    ejecutar: () => {
+      const result = raffle.drawRaffle();
+      if (result.error) return result.error;
+
+      let msg = `*SORTEO CERRADO!*\n\n`;
+      msg += `Numero ganador: *${result.winningNumber}*\n`;
+      msg += `Total participantes: ${result.totalParticipants}\n\n`;
+      msg += `*GANADOR: ${result.winner.userName}*\n`;
+      msg += `Su numero: ${result.winner.number}\n`;
+      msg += `Premio: ${result.prize.name}\n\n`;
+      msg += `Felicidades! Presenta este mensaje en la tienda`;
+      return msg;
+    },
+  },
+
+  batalla: {
+    desc: 'Iniciar batalla Pokemon con otro usuario',
+    ejecutar: (groupId, args, senderName, userId) => {
+      if (args.length === 0) {
+        return 'Usa: *!batalla @usuario* para desafiar a alguien';
+      }
+
+      const opponentName = args[0];
+      const opponentId = args[0].replace(/[^0-9]/g, '') + '@g.us';
+
+      if (opponentId === userId) {
+        return 'No puedes batallar contra ti mismo!';
+      }
+
+      const result = battles.startBattle(userId, senderName, opponentId, opponentName);
+      if (result.error) return result.error;
+      return result.message;
+    },
+  },
+
+  atacar: {
+    desc: 'Atacar en batalla activa',
+    ejecutar: (groupId, args, senderName, userId) => {
+      if (args.length === 0) {
+        return 'Usa: *!atacar [movimiento]*\nMovimientos: ' + battles.getAllMoves().map(m => m.name).join(', ');
+      }
+
+      const activeBattles = battles.getActiveBattles();
+      const myBattle = activeBattles.find(b =>
+        (b.challenger.id === userId || b.opponent.id === userId) && b.status === 'active'
+      );
+
+      if (!myBattle) {
+        return 'No tienes ninguna batalla activa. Usa *!batalla @usuario* para iniciar una';
+      }
+
+      const moveName = args.join(' ');
+      const result = battles.executeAttack(myBattle.id, userId, moveName);
+      if (result.error) return result.error;
+      return result.message;
+    },
+  },
+
+  misbatallas: {
+    desc: 'Ver tus batallas activas',
+    ejecutar: (groupId, args, senderName, userId) => {
+      const activeBattles = battles.getActiveBattles();
+      const myBattles = activeBattles.filter(b =>
+        b.challenger.id === userId || b.opponent.id === userId
+      );
+
+      if (myBattles.length === 0) {
+        return 'No tienes batallas activas. Usa *!batalla @usuario* para iniciar una';
+      }
+
+      let msg = '*TUS BATALLAS ACTIVAS*\n\n';
+      for (const b of myBattles) {
+        msg += `${b.challenger.name} (${b.challenger.pokemon.name}) vs ${b.opponent.name} (${b.opponent.pokemon.name})\n`;
+        msg += `HP: ${b.challenger.currentHp}/${b.challenger.pokemon.hp} vs ${b.opponent.currentHp}/${b.opponent.pokemon.hp}\n\n`;
+      }
+      return msg;
+    },
+  },
+
+  mifigura: {
+    desc: 'Compartir tu figura/coleccion',
+    ejecutar: async (groupId, args, senderName, userId) => {
+      await points.addPoints(groupId, userId, senderName, 'compartir_coleccion', 10);
+      return `*${senderName} compartio su coleccion!*\n\nMuestra tu figura o coleccion Pokemon en el grupo!\n+10 puntos por compartir`;
+    },
+  },
+
+  comparte: {
+    desc: 'Compartir tu Pokemon favorito',
+    ejecutar: async (groupId, args, senderName, userId) => {
+      if (args.length === 0) {
+        return 'Usa: *!comparte [tu Pokemon favorito]*\nEjemplo: !comparte Charizard';
+      }
+      const pokemon = args.join(' ');
+      await points.addPoints(groupId, userId, senderName, 'compartir_favorito', 10);
+      return `*${senderName} compartio su Pokemon favorito: ${pokemon}!*\n\n+10 puntos por compartir`;
+    },
+  },
+
+  premios: {
+    desc: 'Ver premios disponibles',
+    ejecutar: () => {
+      const prizes = raffle.getAllPrizes();
+      let msg = `*PREMIOS DISPONIBLES*\n\n`;
+      prizes.forEach((p, i) => {
+        msg += `${i + 1}. ${p.name} - ${p.points} pts\n`;
+        msg += `   ${p.description}\n\n`;
+      });
+      msg += `Canjea con *!canjear [numero]*`;
       return msg;
     },
   },
