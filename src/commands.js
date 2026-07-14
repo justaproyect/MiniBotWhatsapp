@@ -10,6 +10,7 @@ const ai = require('./ai');
 const community = require('./community');
 const raffle = require('./raffle');
 const battles = require('./battles');
+const sellerProducts = require('./products');
 
 const COMANDOS = {
   ayuda: {
@@ -59,6 +60,11 @@ const COMANDOS = {
         '*Referidos:*',
         '!referir - Obtener codigo de referido',
         '!fuiinvitadopor [codigo] - Registrarte como referido',
+        '',
+        '*Vendedores:*',
+        '!productos [orlando/luis] - Ver productos de un vendedor',
+        '!misproductos - Ver mis productos pendientes',
+        '!verproducto [numero] - Ver detalles de producto',
         '',
         '*Admin:*',
         '!registrar <tipo> - Registrar grupo',
@@ -699,6 +705,95 @@ const COMANDOS = {
         msg += `   ${p.description}\n\n`;
       });
       msg += `Canjea con *!canjear [numero]*`;
+      return msg;
+    },
+  },
+
+  productos: {
+    desc: 'Ver productos de un vendedor',
+    ejecutar: async (groupId, args, senderName, userId) => {
+      const sellerId = args[0]?.toLowerCase();
+      if (!sellerId || !['orlando', 'luis'].includes(sellerId)) {
+        return 'Usa: *!productos [orlando/luis]*\nEjemplo: !productos orlando';
+      }
+
+      const sellerProductsList = await sellerProducts.getProducts(sellerId);
+      const sellerInfo = sellerProducts.getSellerInfo(sellerId);
+
+      if (sellerProductsList.length === 0) {
+        return `${sellerInfo.name} no tiene productos registrados`;
+      }
+
+      let msg = `*PRODUCTOS DE ${sellerInfo.name}*\n\n`;
+      sellerProductsList.forEach((p, i) => {
+        msg += `${i + 1}. ${p.name}\n`;
+        if (p.price) msg += `   Precio: ${p.price}\n`;
+        if (p.description) msg += `   ${p.description}\n`;
+        msg += `   Categoria: ${p.category}\n\n`;
+      });
+      msg += `Total: ${sellerProductsList.length} productos`;
+      return msg;
+    },
+  },
+
+  misproductos: {
+    desc: 'Ver mis productos pendientes',
+    ejecutar: async (groupId, args, senderName, userId) => {
+      let sellerId = null;
+      if (userId.includes('orlando')) sellerId = 'orlando';
+      else if (userId.includes('luis')) sellerId = 'luis';
+
+      if (!sellerId) {
+        return 'No estas registrado como vendedor. Contacta al admin.';
+      }
+
+      const dailyProducts = await sellerProducts.getDailyProducts(sellerId, 5);
+      const sellerInfo = sellerProducts.getSellerInfo(sellerId);
+
+      if (dailyProducts.length === 0) {
+        return `${sellerInfo.name}, no tienes productos pendientes para publicar`;
+      }
+
+      let msg = `*PRODUCTOS PARA PUBLICAR - ${sellerInfo.name}*\n\n`;
+      dailyProducts.forEach((p, i) => {
+        msg += `${i + 1}. *${p.name}*\n`;
+        if (p.price) msg += `   Precio: ${p.price}\n`;
+        if (p.description) msg += `   ${p.description}\n`;
+        msg += `   Dias enviado: ${p.daysSent}\n\n`;
+      });
+      msg += `Usa *!verproducto [numero]* para ver detalles`;
+      return msg;
+    },
+  },
+
+  verproducto: {
+    desc: 'Ver detalles de un producto',
+    ejecutar: async (groupId, args, senderName, userId) => {
+      if (args.length === 0) {
+        return 'Usa: *!verproducto [numero]*';
+      }
+
+      const index = parseInt(args[0]) - 1;
+      let sellerId = null;
+      if (userId.includes('orlando')) sellerId = 'orlando';
+      else if (userId.includes('luis')) sellerId = 'luis';
+
+      if (!sellerId) {
+        return 'No estas registrado como vendedor.';
+      }
+
+      const productsList = await sellerProducts.getProducts(sellerId);
+      if (index < 0 || index >= productsList.length) {
+        return 'Numero de producto invalido';
+      }
+
+      const product = productsList[index];
+      let msg = `*${product.name}*\n\n`;
+      if (product.price) msg += `Precio: ${product.price}\n`;
+      if (product.description) msg += `Descripcion: ${product.description}\n`;
+      msg += `Categoria: ${product.category}\n`;
+      msg += `Veces enviado: ${product.daysSent}\n`;
+      if (product.imageUrl) msg += `\nTiene imagen para publicar`;
       return msg;
     },
   },

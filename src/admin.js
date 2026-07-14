@@ -1301,4 +1301,235 @@ function escapeHtml(str) {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+const products = require('./products');
+
+router.get('/products', async (req, res) => {
+  const sellers = products.getAllSellers();
+  const categories = products.getCategories();
+
+  let productsBySeller = {};
+  for (const sellerId of Object.keys(sellers)) {
+    productsBySeller[sellerId] = await products.getProducts(sellerId);
+  }
+
+  let html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Productos - Vendedores</title>
+      <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #1a1a2e; color: #eee; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { color: #ffcb05; margin-bottom: 20px; }
+        .seller-section { background: rgba(22, 33, 62, 0.95); border-radius: 15px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255, 203, 5, 0.2); }
+        .seller-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .seller-name { color: #ffcb05; font-size: 1.5em; }
+        .btn { padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; text-decoration: none; display: inline-block; }
+        .btn-primary { background: #ffcb05; color: #1a1a2e; }
+        .btn-success { background: #4caf50; color: white; }
+        .btn-danger { background: #f44336; color: white; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
+        .product-card { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 15px; }
+        .product-card img { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; }
+        .product-name { font-weight: bold; margin-bottom: 5px; }
+        .product-price { color: #4caf50; font-weight: bold; }
+        .product-category { color: #aaa; font-size: 0.85em; }
+        .product-actions { margin-top: 10px; display: flex; gap: 5px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; color: #ffcb05; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #333; border-radius: 8px; background: #16213e; color: #eee; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; }
+        .modal-content { background: #16213e; max-width: 500px; margin: 50px auto; padding: 30px; border-radius: 15px; }
+        .stats { display: flex; gap: 20px; margin-bottom: 15px; }
+        .stat { text-align: center; }
+        .stat-value { font-size: 2em; font-weight: bold; color: #ffcb05; }
+        .stat-label { color: #aaa; font-size: 0.85em; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <h1>Productos para Vendedores</h1>
+        <p style="color:#aaa; margin-bottom:20px;">Sube los productos que Luis y Orlando deben publicar cada dia</p>
+        
+        <div style="margin-bottom:20px;">
+          <a href="/admin" class="btn btn-primary">Volver al Admin</a>
+          <button class="btn btn-success" onclick="openAddModal()">+ Agregar Producto</button>
+        </div>`;
+
+  for (const [sellerId, sellerInfo] of Object.entries(sellers)) {
+    const sellerProducts = productsBySeller[sellerId] || [];
+    const stats = await products.getSellerStats(sellerId);
+
+    html += `
+        <div class="seller-section">
+          <div class="seller-header">
+            <span class="seller-name">${sellerInfo.name}</span>
+            <div class="stats">
+              <div class="stat">
+                <div class="stat-value">${stats?.total || 0}</div>
+                <div class="stat-label">Total</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value">${stats?.sent || 0}</div>
+                <div class="stat-label">Enviados</div>
+              </div>
+              <div class="stat">
+                <div class="stat-value">${stats?.notSent || 0}</div>
+                <div class="stat-label">Pendientes</div>
+              </div>
+            </div>
+          </div>
+          <div class="products-grid">`;
+
+    for (const product of sellerProducts) {
+      html += `
+            <div class="product-card">
+              ${product.imageUrl ? `<img src="${product.imageUrl}" alt="${product.name}">` : '<div style="height:150px;background:#333;border-radius:8px;display:flex;align-items:center;justify-content:center;">Sin imagen</div>'}
+              <div class="product-name">${product.name}</div>
+              ${product.price ? `<div class="product-price">${product.price}</div>` : ''}
+              <div class="product-category">${product.category}</div>
+              <div class="product-actions">
+                <button class="btn btn-danger" onclick="deleteProduct('${product._id}')">Eliminar</button>
+              </div>
+            </div>`;
+    }
+
+    html += `
+          </div>
+        </div>`;
+  }
+
+  html += `
+      </div>
+
+      <div id="addModal" class="modal">
+        <div class="modal-content">
+          <h2 style="margin-bottom:20px;">Agregar Producto</h2>
+          <form id="productForm">
+            <div class="form-group">
+              <label>Vendedor</label>
+              <select id="sellerId" required>
+                ${Object.entries(sellers).map(([id, s]) => `<option value="${id}">${s.name}</option>`).join('')}
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Nombre del Producto</label>
+              <input type="text" id="productName" required placeholder="Ej: Figura Pikachu">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Precio</label>
+                <input type="text" id="productPrice" placeholder="Ej: $35.000">
+              </div>
+              <div class="form-group">
+                <label>Categoria</label>
+                <select id="productCategory">
+                  ${categories.map(c => `<option value="${c}">${c}</option>`).join('')}
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Descripcion</label>
+              <textarea id="productDescription" rows="3" placeholder="Descripcion del producto..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>URL de Imagen (Cloudinary)</label>
+              <input type="text" id="productImage" placeholder="https://res.cloudinary.com/...">
+            </div>
+            <div style="display:flex;gap:10px;justify-content:flex-end;">
+              <button type="button" class="btn btn-danger" onclick="closeAddModal()">Cancelar</button>
+              <button type="submit" class="btn btn-success">Guardar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <script>
+        function openAddModal() {
+          document.getElementById('addModal').style.display = 'block';
+        }
+        function closeAddModal() {
+          document.getElementById('addModal').style.display = 'none';
+        }
+        document.getElementById('productForm').onsubmit = async (e) => {
+          e.preventDefault();
+          const data = {
+            sellerId: document.getElementById('sellerId').value,
+            name: document.getElementById('productName').value,
+            price: document.getElementById('productPrice').value,
+            category: document.getElementById('productCategory').value,
+            description: document.getElementById('productDescription').value,
+            imageUrl: document.getElementById('productImage').value,
+          };
+          const res = await fetch('/admin/products/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+          const result = await res.json();
+          if (result.success) {
+            alert('Producto agregado!');
+            location.reload();
+          } else {
+            alert('Error: ' + result.error);
+          }
+        };
+        async function deleteProduct(id) {
+          if (!confirm('Eliminar este producto?')) return;
+          const res = await fetch('/admin/products/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id }),
+          });
+          const result = await res.json();
+          if (result.success) {
+            alert('Eliminado!');
+            location.reload();
+          }
+        }
+      </script>
+    </body>
+    </html>`;
+
+  res.send(html);
+});
+
+router.post('/products/add', async (req, res) => {
+  try {
+    const { sellerId, name, price, category, description, imageUrl } = req.body;
+    const product = await products.addProduct(sellerId, { name, price, category, description, imageUrl });
+    if (product) {
+      res.json({ success: true, product });
+    } else {
+      res.json({ success: false, error: 'Error al agregar producto' });
+    }
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+router.post('/products/delete', async (req, res) => {
+  try {
+    const { id } = req.body;
+    const result = await products.deleteProduct(id);
+    res.json({ success: result });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+router.post('/products/send-now', async (req, res) => {
+  try {
+    const { sendDailyProducts } = require('./productScheduler');
+    await sendDailyProducts();
+    res.json({ success: true, message: 'Productos enviados' });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
 module.exports = router;

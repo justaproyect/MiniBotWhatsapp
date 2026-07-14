@@ -3,6 +3,7 @@ const config = require('./config');
 const { connectToWhatsApp, isBotConnected, getQR, sendMessage, sendText } = require('./baileys');
 const { startScheduler, sendDailyMessages } = require('./scheduler');
 const { startTodayActivity } = require('./todayScheduler');
+const { startProductScheduler } = require('./productScheduler');
 const engagement = require('./engagement');
 const adminRouter = require('./admin');
 const cloudinary = require('./cloudinary');
@@ -339,6 +340,7 @@ const server = app.listen(config.PORT, async () => {
     () => {
       console.log('[MAIN] Bot listo. Iniciando programador...');
       startScheduler();
+      startProductScheduler(7, 0);
     }
   );
 });
