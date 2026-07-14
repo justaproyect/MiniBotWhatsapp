@@ -324,6 +324,9 @@ router.post('/queue/upload-excel', upload.single('excel'), async (req, res) => {
 
 router.get('/queue/template', (req, res) => {
   const wb = XLSX.utils.book_new();
+
+  const headerStyle = { font: { bold: true }, fill: { fgColor: { rgb: 'FFCB05' } } };
+
   const data = [
     { tipo: 'general', titulo: 'Pokemon del dia', contenido: 'Hoy te presentamos a un Pokemon especial...', imagen: '(Pega aqui la URL de Cloudinary)', video: '', fecha: '2026-07-15', hora: '08:00' },
     { tipo: 'compra', titulo: 'Intercambio', contenido: 'Busco Pokemon tipo fuego para intercambiar...', imagen: '', video: '', fecha: '2026-07-15', hora: '08:00' },
@@ -340,6 +343,109 @@ router.get('/queue/template', (req, res) => {
   XLSX.utils.book_append_sheet(wb, ws, 'Contenido');
   const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
   res.setHeader('Content-Disposition', 'attachment; filename=plantilla-contenido-bot.xlsx');
+  res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  res.send(buffer);
+});
+
+router.get('/queue/template-full', (req, res) => {
+  const wb = XLSX.utils.book_new();
+
+  const publicaciones = [
+    // SEMANA 1 - LUNES
+    { fecha: '2026-07-14', hora: '08:00', tipo: 'general', titulo: 'Lunes Pokemon', contenido: 'Buenos dias entrenadores! Empieza la semana con fuerza. Hoy toca retodia: Adivina el Pokemon!\n\n_ _ _ _ _ _\n\nResponde con el nombre! +10 puntos al primero', imagen: '', video: '' },
+    { fecha: '2026-07-14', hora: '12:00', tipo: 'tienda', titulo: 'Ofertas del Lunes', contenido: 'TOYTSUKY - OFERTAS DEL LUNES\n\nSobres basicos: $3.000\nSobres elite: $8.000\nFiguras basicas: $15.000\n\nVisitanos! Sincelejo, Sucre\n10AM - 8PM', imagen: '', video: '' },
+    { fecha: '2026-07-14', hora: '18:00', tipo: 'compra', titulo: 'Dato Curioso', contenido: 'Sabias que?\nPikachu fue originalmente llamado "Pika" en el desarrollo temprano del juego.\n\nCual es tu dato favorito de Pokemon?', imagen: '', video: '' },
+
+    // SEMANA 1 - MARTES
+    { fecha: '2026-07-15', hora: '08:00', tipo: 'torneos', titulo: 'Martes de Batallas', contenido: 'Hoy es dia de batallas! +10 puntos extra por participar\n\nEscribe !batalla @usuario para desafiar a alguien\n\nBatalla con estrategia y gana puntos!', imagen: '', video: '' },
+    { fecha: '2026-07-15', hora: '12:00', tipo: 'general', titulo: 'Trivia Pokemon', contenido: 'TRIVIA POKEMON\n\nQue tipo es Bulbasaur?\nA) Fuego\nB) Agua\nC) Planta\nD) Normal\n\nResponde con la letra! +10 puntos', imagen: '', video: '' },
+    { fecha: '2026-07-15', hora: '18:00', tipo: 'rifas', titulo: 'Rifa Semanal', contenido: 'SORTEO SEMANAL TOYTSUKY\n\nPremio: Sobre de cartas Pokemon gratis!\n\nPara participar escribe:\n!sorteo [numero del 1 al 100]\n\nEl numero mas cercano gana!', imagen: '', video: '' },
+
+    // SEMANA 1 - MIERCOLES
+    { fecha: '2026-07-16', hora: '08:00', tipo: 'tienda', titulo: 'Miercoles de Ofertas 2x1', contenido: 'HOY ES MIERCOLES DE OFERTAS!\n\n2x1 en sobres de cartas\nSolo por hoy! Visitanos\n\n+Sobres basicos: $3.000\n+Sobres elite: $8.000\n\n10AM - 8PM', imagen: '', video: '' },
+    { fecha: '2026-07-16', hora: '12:00', tipo: 'anuncios', titulo: 'Cupon de Descuento', contenido: 'CODIGO DE DESCUENTO\n\nUsa el codigo: POKEMON5\ny obtén 5% de descuento\n\nVálido hasta el viernes\nSolo en tienda fisica', imagen: '', video: '' },
+    { fecha: '2026-07-16', hora: '18:00', tipo: 'general', titulo: 'Comparte tu Favorito', contenido: 'Escribe !comparte [tu Pokemon favorito]\ny gana +10 puntos!\n\nComparte con la comunidad\ncual es tu Pokemon favorito y por que', imagen: '', video: '' },
+
+    // SEMANA 1 - JUEVES
+    { fecha: '2026-07-17', hora: '08:00', tipo: 'subastas', titulo: 'Jueves de Trivia Avanzada', contenido: 'TRIVIA AVANZADA\n\nEn que generacion fue introducido el tipo Hada?\nA) Generacion 1\nB) Generacion 2\nC) Generacion 6\nD) Generacion 7\n\n+15 puntos por acertar!', imagen: '', video: '' },
+    { fecha: '2026-07-17', hora: '12:00', tipo: 'torneos', titulo: 'PokeBattle Challenge', contenido: 'DESAFIO POKEBATTLE\n\nEscribe !batalla @usuario\npara desafiar a un amigo\n\nGanador: +15 puntos\nPerdedor: +5 puntos\n\nBatallas con tipo y estrategia!', imagen: '', video: '' },
+    { fecha: '2026-07-17', hora: '18:00', tipo: 'general', titulo: 'Costumbres Pokemon', contenido: 'COSTUMBRES POKEMON\n\nCual es tu Pokemon favorito y por que?\n\nComparte tu respuesta\nLa mejor recibe +15 puntos!', imagen: '', video: '' },
+
+    // SEMANA 1 - VIERNES
+    { fecha: '2026-07-18', hora: '08:00', tipo: 'tienda', titulo: 'Viernes de Descuentos', contenido: 'HOY ES VIERNES DE DESCUENTOS!\n\n15% OFF en todas las figuras\nSolo por hoy! Visitanos\n\nFiguras basicas: $15.000 -> $12.750\nFiguras especiales: $35.000 -> $29.750', imagen: '', video: '' },
+    { fecha: '2026-07-18', hora: '12:00', tipo: 'rifas', titulo: 'Sorteo Especial', contenido: 'SORTEO ESPECIAL VIERNES\n\nPremio: Figura basica de Pokemon!\n\nParticipa con !sorteo [numero]\nEl numero mas cercano gana!\n\n+10 puntos extra por participar', imagen: '', video: '' },
+    { fecha: '2026-07-18', hora: '18:00', tipo: 'general', titulo: 'Meme del Dia', contenido: 'MEME DEL DIA\n\nYo: "No voy a comprar mas Pokemon"\nPokemon: *lanza nueva coleccion*\nYo: *abre la billetera*\n\nComparte tu meme favorito!\nEl mas gracioso: +10 puntos', imagen: '', video: '' },
+
+    // SEMANA 1 - SABADO
+    { fecha: '2026-07-19', hora: '08:00', tipo: 'compra', titulo: 'Sabado de Comunidad', contenido: 'SABADO DE COMUNIDAD\n\nComparte tu coleccion con !mifigura\nMuestra tus figuras y cartas!\n\n+10 puntos por compartir\nLa mejor coleccion gana +20 puntos extra', imagen: '', video: '' },
+    { fecha: '2026-07-19', hora: '12:00', tipo: 'tienda', titulo: 'Ofertas del Sabado', contenido: 'OFERTAS DEL SABADO\n\nCajas completas: $120.000\nSobres elite: $8.000\nFiguras especiales: $35.000\n\nEnvio gratis en compras +$50.000', imagen: '', video: '' },
+    { fecha: '2026-07-19', hora: '18:00', tipo: 'anuncios', titulo: 'Proximo Evento', contenido: 'PROXIMO EVENTO\n\nFecha: Sabado proximo\nLugar: Toytsuky, Sincelejo\n\nEncuentro Pokemon\nIntercambios y batallas\n\nParticipa y gana premios!', imagen: '', video: '' },
+
+    // SEMANA 1 - DOMINGO
+    { fecha: '2026-07-20', hora: '10:00', tipo: 'general', titulo: 'Ranking Semanal', contenido: 'RANKING SEMANAL\n\nLos mejores entrenadores de la semana:\n\n1. [Ganador] - [puntos] pts\n2. [Segundo] - [puntos] pts\n3. [Tercero] - [puntos] pts\n\nFelicidades a los ganadores!', imagen: '', video: '' },
+    { fecha: '2026-07-20', hora: '14:00', tipo: 'tienda', titulo: 'Domingo de Descanso', contenido: 'DOMINGO DE DESCANSO\n\nHoy la tienda esta cerrada\nPero manana volvemos con mas ofertas!\n\nRecuerda:\nLunes a Sabado: 10AM - 8PM\nDomingo: Cerrado', imagen: '', video: '' },
+    { fecha: '2026-07-20', hora: '18:00', tipo: 'general', titulo: 'Vista Previa Semana', contenido: 'VISTA PREVIA DE LA SEMANA\n\nLunes: Retos y trivia\nMartes: Batallas\nMiercoles: Ofertas 2x1\nJueves: Trivia avanzada\nViernes: Sorteo especial\nSabado: Comunidad\nDomingo: Ranking', imagen: '', video: '' },
+  ];
+
+  const ws = XLSX.utils.json_to_sheet(publicaciones);
+  ws['!cols'] = [
+    { wch: 12 },
+    { wch: 8 },
+    { wch: 14 },
+    { wch: 25 },
+    { wch: 80 },
+    { wch: 50 },
+    { wch: 50 },
+  ];
+  XLSX.utils.book_append_sheet(wb, ws, 'Semana 1');
+
+  const instrucciones = [
+    { paso: 1, accion: 'Sube imagenes a Cloudinary desde el admin (/admin)', nota: 'Cada imagen genera una URL permanente' },
+    { paso: 2, accion: 'Copia la URL de Cloudinary y pegala en la columna "imagen"', nota: 'Formato: https://res.cloudinary.com/...' },
+    { paso: 3, accion: 'Edita el contenido segun necesites', nota: 'Puedes cambiar textos, fechas y horas' },
+    { paso: 4, accion: 'Guarda el archivo Excel', nota: 'Formato .xlsx' },
+    { paso: 5, accion: 'Ve a /admin y sube el Excel', nota: 'Click en "Subir Excel" en la seccion Cola' },
+    { paso: 6, accion: 'Revisa la cola en "Cola de Contenido"', nota: 'Verifica fechas, horas y grupos' },
+    { paso: 7, accion: 'El bot envia automaticamente segun la programmed', nota: 'Los posts se envian a las 8:00 AM diariamente' },
+  ];
+  const wsInstrucciones = XLSX.utils.json_to_sheet(instrucciones);
+  wsInstrucciones['!cols'] = [{ wch: 6 }, { wch: 60 }, { wch: 50 }];
+  XLSX.utils.book_append_sheet(wb, wsInstrucciones, 'Instrucciones');
+
+  const grupos = [
+    { tipo: 'general', nombre: 'General', descripcion: ' contenido variado, trivia, datos curiosos' },
+    { tipo: 'compra', nombre: 'Compra y Venta', descripcion: ' intercambios, ventas, compras' },
+    { tipo: 'rifas', nombre: 'Rifas', descripcion: ' sorteos, rifas, premios' },
+    { tipo: 'torneos', nombre: 'Torneos', descripcion: ' batallas, competencias, eventos' },
+    { tipo: 'subastas', nombre: 'Subastas', descripcion: ' subastas de cartas y figuras raras' },
+    { tipo: 'tienda', nombre: 'Tienda', descripcion: ' ofertas, descuentos, productos' },
+    { tipo: 'anuncios', nombre: 'Anuncios', descripcion: ' avisos oficiales, eventos, novedades' },
+  ];
+  const wsGrupos = XLSX.utils.json_to_sheet(grupos);
+  wsGrupos['!cols'] = [{ wch: 12 }, { wch: 18 }, { wch: 50 }];
+  XLSX.utils.book_append_sheet(wb, wsGrupos, 'Grupos');
+
+  const comandos = [
+    { comando: '!retodia', descripcion: 'Reto del dia', puntos: '10 pts', uso: 'Escribe !retodia en el grupo' },
+    { comando: '!reto', descripcion: 'Reto random', puntos: '10 pts', uso: 'Escribe !reto en el grupo' },
+    { comando: '!especial', descripcion: 'Actividad especial del dia', puntos: 'Varia', uso: 'Escribe !especial en el grupo' },
+    { comando: '!batalla @user', descripcion: 'Iniciar batalla Pokemon', puntos: '15/5 pts', uso: 'Escribe !batalla @usuario' },
+    { comando: '!atacar [mov]', descripcion: 'Atacar en batalla', puntos: '-', uso: 'Escribe !atacar [movimiento]' },
+    { comando: '!sorteo [num]', descripcion: 'Participar en sorteo', puntos: '10 pts', uso: 'Escribe !sorteo [1-100]' },
+    { comando: '!comparte [poke]', descripcion: 'Compartir favorito', puntos: '10 pts', uso: 'Escribe !comparte Pikachu' },
+    { comando: '!mifigura', descripcion: 'Compartir coleccion', puntos: '10 pts', uso: 'Escribe !mifigura' },
+    { comando: '!puntos', descripcion: 'Ver puntos', puntos: '-', uso: 'Escribe !puntos' },
+    { comando: '!top', descripcion: 'Ranking', puntos: '-', uso: 'Escribe !top' },
+    { comando: '!canjear', descripcion: 'Canjear puntos', puntos: '-', uso: 'Escribe !canjear [num]' },
+    { comando: '!tienda', descripcion: 'Ver tienda', puntos: '-', uso: 'Escribe !tienda' },
+    { comando: '!referir', descripcion: 'Codigo referido', puntos: '50 pts', uso: 'Escribe !referir' },
+  ];
+  const wsComandos = XLSX.utils.json_to_sheet(comandos);
+  wsComandos['!cols'] = [{ wch: 18 }, { wch: 22 }, { wch: 10 }, { wch: 35 }];
+  XLSX.utils.book_append_sheet(wb, wsComandos, 'Comandos');
+
+  const buffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+  res.setHeader('Content-Disposition', 'attachment; filename=plantilla-completa-toytsuky.xlsx');
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   res.send(buffer);
 });
@@ -834,7 +940,8 @@ function getAdminHTML(content, queueItems, mediaLib) {
             Sube un Excel con todo el contenido programado. Descarga la plantilla primero.
           </p>
           <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-            <a href="/admin/queue/template" class="btn btn-preview" style="text-decoration:none;">📥 Descargar plantilla</a>
+            <a href="/admin/queue/template" class="btn btn-preview" style="text-decoration:none;">📥 Descargar plantilla basica</a>
+            <a href="/admin/queue/template-full" class="btn btn-success" style="text-decoration:none;">📥 Plantilla completa (7 dias)</a>
             <label class="btn btn-add" style="cursor:pointer;">
               📁 Seleccionar Excel
               <input type="file" id="excel-file" accept=".xlsx,.xls" style="display:none;" onchange="uploadExcel()">
