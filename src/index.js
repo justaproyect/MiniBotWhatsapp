@@ -34,6 +34,107 @@ app.get('/health', (req, res) => {
 
 app.use('/admin', adminRouter);
 
+app.get('/hoy', (req, res) => {
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+  const days = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
+  const dayName = days[today.getDay()];
+
+  const queue = require('./queue');
+  const items = queue.getAllItems();
+  const todayItems = items.filter(i => i.fecha === todayStr && !i.enviada);
+
+  const community = require('./community');
+  const special = community.getWeeklySpecial();
+  const challenge = community.getDailyChallenge();
+
+  const grupos = Object.entries(config.GROUPS).filter(([id, g]) => g.registrado);
+
+  let html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Contenido de Hoy - Toytsuky</title>
+      <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); color: #eee; min-height: 100vh; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: #ffcb05; font-size: 2em; margin-bottom: 10px; }
+        .header .date { color: #aaa; font-size: 1.1em; }
+        .card { background: rgba(22, 33, 62, 0.95); border-radius: 15px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255, 203, 5, 0.2); }
+        .card h2 { color: #ffcb05; margin-bottom: 15px; font-size: 1.3em; }
+        .special { background: rgba(255, 203, 5, 0.1); border-left: 4px solid #ffcb05; }
+        .challenge { background: rgba(76, 175, 80, 0.1); border-left: 4px solid #4caf50; }
+        .queue-item { background: rgba(33, 150, 243, 0.1); border-left: 4px solid #2196f3; margin-bottom: 10px; padding: 15px; border-radius: 8px; }
+        .queue-item .time { color: #ffcb05; font-weight: bold; }
+        .queue-item .group { color: #aaa; font-size: 0.9em; }
+        .queue-item .title { font-weight: bold; margin: 5px 0; }
+        .queue-item .content { color: #ccc; font-size: 0.9em; white-space: pre-line; }
+        .no-content { color: #aaa; text-align: center; padding: 20px; }
+        .groups { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        .group-badge { background: rgba(255, 203, 5, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.85em; }
+        .refresh { display: inline-block; margin-top: 20px; padding: 10px 20px; background: #ffcb05; color: #1a1a2e; border-radius: 8px; text-decoration: none; font-weight: bold; }
+        .refresh:hover { background: #e6b800; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>TOYTSUKY</h1>
+          <div class="date">${dayName} ${todayStr}</div>
+        </div>
+
+        <div class="card special">
+          <h2>Actividad Especial del Dia</h2>
+          <p><strong>${special.nombre}</strong></p>
+          <p>${special.message}</p>
+        </div>
+
+        <div class="card challenge">
+          <h2>Reto del Dia</h2>
+          <p><strong>${challenge.nombre}</strong></p>
+          <p>Escribe <code>!retodia</code> en el grupo para ver el reto</p>
+        </div>
+
+        <div class="card">
+          <h2>Contenido Programado para Hoy</h2>
+          ${todayItems.length > 0 ? todayItems.map(item => {
+            const grupo = grupos.find(([id, g]) => g.tipo === item.tipo);
+            const groupName = grupo ? grupo[1].nombre : item.tipo;
+            return `
+              <div class="queue-item">
+                <span class="time">${item.hora}</span>
+                <span class="group">${groupName}</span>
+                <div class="title">${item.titulo || '(Sin titulo)'}</div>
+                <div class="content">${item.contenido.substring(0, 200)}${item.contenido.length > 200 ? '...' : ''}</div>
+                ${item.imageUrl ? '<p style="color:#4caf50;">Tiene imagen</p>' : ''}
+              </div>
+            `;
+          }).join('') : '<p class="no-content">No hay contenido programado para hoy</p>'}
+        </div>
+
+        <div class="card">
+          <h2>Grupos Activos</h2>
+          <div class="groups">
+            ${grupos.map(([id, g]) => `<span class="group-badge">${g.nombre}</span>`).join('')}
+          </div>
+        </div>
+
+        <div style="text-align: center;">
+          <a href="/hoy" class="refresh">Actualizar</a>
+          <a href="/admin" class="refresh" style="margin-left: 10px; background: #333; color: #fff;">Admin Panel</a>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  res.send(html);
+});
+
 app.get('/qr', (req, res) => {
   const qr = getQR();
   if (qr) res.json({ qr });
