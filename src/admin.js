@@ -357,7 +357,7 @@ router.get('/queue/template-full', (req, res) => {
     { fecha: '2026-07-14', hora: '18:00', tipo: 'compra', titulo: 'Dato Curioso', contenido: 'Sabias que?\nPikachu fue originalmente llamado "Pika" en el desarrollo temprano del juego.\n\nCual es tu dato favorito de Pokemon?', imagen: '', video: '' },
 
     // SEMANA 1 - MARTES
-    { fecha: '2026-07-15', hora: '08:00', tipo: 'torneos', titulo: 'Martes de Batallas', contenido: 'Hoy es dia de batallas! +10 puntos extra por participar\n\nEscribe !batalla @usuario para desafiar a alguien\n\nBatalla con estrategia y gana puntos!', imagen: '', video: '' },
+    { fecha: '2026-07-15', hora: '08:00', tipo: 'torneos', titulo: 'Martes de Batallas', contenido: 'Hoy es dia de batallas! +10 puntos extra por participar\n\nEscribe !batalla @usuario para desafiar a alguien\n\nPokemon del dia: PIKACHU\nBatalla con estrategia y gana puntos!', imagen: '', video: '' },
     { fecha: '2026-07-15', hora: '12:00', tipo: 'general', titulo: 'Trivia Pokemon', contenido: 'TRIVIA POKEMON\n\nQue tipo es Bulbasaur?\nA) Fuego\nB) Agua\nC) Planta\nD) Normal\n\nResponde con la letra! +10 puntos', imagen: '', video: '' },
     { fecha: '2026-07-15', hora: '18:00', tipo: 'rifas', titulo: 'Rifa Semanal', contenido: 'SORTEO SEMANAL TOYTSUKY\n\nPremio: Sobre de cartas Pokemon gratis!\n\nPara participar escribe:\n!sorteo [numero del 1 al 100]\n\nEl numero mas cercano gana!', imagen: '', video: '' },
 
