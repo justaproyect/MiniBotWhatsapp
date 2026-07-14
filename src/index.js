@@ -1,23 +1,10 @@
 const express = require('express');
 const config = require('./config');
 const { connectToWhatsApp, isBotConnected, getQR, sendMessage, sendText } = require('./baileys');
-const { startScheduler, sendDailyMessages } = require('./scheduler');
-const { startTodayActivity } = require('./todayScheduler');
-const { startProductScheduler } = require('./simpleProductScheduler');
-const engagement = require('./engagement');
 const adminRouter = require('./admin');
 const cloudinary = require('./cloudinary');
 
 cloudinary.configure();
-
-global.sendToGroup = async (groupId, text) => {
-  try {
-    await sendText(groupId, text);
-    console.log(`[GLOBAL] Mensaje enviado a ${groupId}`);
-  } catch (err) {
-    console.error(`[GLOBAL] Error enviando a ${groupId}:`, err.message);
-  }
-};
 
 const app = express();
 app.use(express.json());
