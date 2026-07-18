@@ -1,7 +1,7 @@
 const config = require('./config');
 
 const POINTS_PER_ACTION = {
-  mensaje: 1,
+  mensaje: 0.3,
   trivia_correcta: 10,
   pokemon_visto: 5,
   pokebattle_ganada: 15,
